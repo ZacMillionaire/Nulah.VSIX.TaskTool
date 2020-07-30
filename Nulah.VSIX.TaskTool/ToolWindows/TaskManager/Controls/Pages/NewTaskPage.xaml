@@ -3,6 +3,7 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:vsshell="clr-namespace:Microsoft.VisualStudio.Shell;assembly=Microsoft.VisualStudio.Shell.15.0"
       xmlns:ViewModel="clr-namespace:Nulah.VSIX.TaskTool.ToolWindows.TaskManager.ViewModels.Pages"
       xmlns:local="clr-namespace:Nulah.VSIX.TaskTool.ToolWindows.TaskManager.Controls.Pages"
       mc:Ignorable="d" 
@@ -12,27 +13,46 @@
         <ViewModel:NewTaskPageViewModel/>
     </Page.DataContext>
     <Page.Resources>
-        <local:IsStringNullOrEmptyConverter x:Key="IsNullConverter"/>
-        <Storyboard x:Key="FadeInOut">
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="Opacity">
-                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
-                <EasingDoubleKeyFrame KeyTime="0:0:0.25" Value="1"/>
-                <EasingDoubleKeyFrame KeyTime="0:0:4" Value="1"/>
-                <EasingDoubleKeyFrame KeyTime="0:0:5" Value="0"/>
-            </DoubleAnimationUsingKeyFrames>
-            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)">
-                <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}"/>
-                <DiscreteObjectKeyFrame KeyTime="0:0:5.1" Value="{x:Static Visibility.Hidden}"/>
-            </ObjectAnimationUsingKeyFrames>
-        </Storyboard>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Nulah.VSIX.TaskTool;component/IconResources.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <local:IsStringNullOrEmptyConverter x:Key="IsNullConverter"/>
+        </ResourceDictionary>
     </Page.Resources>
     <Grid>
-        <StackPanel>
+        <StackPanel Margin="5,0">
             <TextBlock FontWeight="Bold" FontSize="18">New Task</TextBlock>
             <TextBlock FontWeight="Bold" FontSize="12">Title</TextBlock>
-            <TextBox Text="{Binding TaskTitle, UpdateSourceTrigger=PropertyChanged}" ClipToBounds="True" TextWrapping="Wrap"></TextBox>
+            <TextBox Margin="5,0" Text="{Binding TaskTitle, UpdateSourceTrigger=PropertyChanged}" ClipToBounds="True" TextWrapping="Wrap">
+                <TextBox.Style>
+                    <Style TargetType="TextBox">
+                        <Style.Setters>
+                            <Setter Property="Background" Value="{StaticResource InputRequired}" />
+                        </Style.Setters>
+                        <Style.Triggers>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter Property="Background" Value="{DynamicResource InputFocused}" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBox.Style>
+            </TextBox>
             <TextBlock FontWeight="Bold" FontSize="12">Content</TextBlock>
-            <TextBox Text="{Binding TaskContent,UpdateSourceTrigger=PropertyChanged}"  ClipToBounds="True" TextWrapping="Wrap" MinLines="10"></TextBox>
+            <TextBox Margin="5,0" Text="{Binding TaskContent,UpdateSourceTrigger=PropertyChanged}"  ClipToBounds="True" TextWrapping="Wrap" MinLines="10" AcceptsTab="True" AcceptsReturn="True">
+                <TextBox.Style>
+                    <Style TargetType="TextBox">
+                        <Style.Setters>
+                            <Setter Property="Background" Value="{StaticResource InputRequired}" />
+                        </Style.Setters>
+                        <Style.Triggers>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter Property="Background" Value="{DynamicResource InputFocused}" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBox.Style>
+            </TextBox>
             <StackPanel x:Name="StatusTextPanel" Visibility="Hidden" Margin="0,5">
                 <StackPanel.Style>
                     <Style>
@@ -49,7 +69,7 @@
                     <TextBlock x:Name="StatusText" HorizontalAlignment="Center" Text="{Binding ResultMessage, NotifyOnTargetUpdated=True}"/>
                 </Border>
             </StackPanel>
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+            <StackPanel Margin="5,0" Orientation="Horizontal" HorizontalAlignment="Right">
                 <Button IsEnabled="{Binding IsCreateEnabled}" Command="{Binding CreateNewTaskCommand}">Create</Button>
             </StackPanel>
         </StackPanel>

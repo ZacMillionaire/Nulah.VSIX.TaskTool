@@ -2,6 +2,9 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:local="clr-namespace:Nulah.VSIX.TaskTool">
 
+    <SolidColorBrush x:Key="InputFocused" Color="White"/>
+    <SolidColorBrush x:Key="InputRequired" Color="Wheat"/>
+
     <Viewbox x:Key="UI_Back_Icon" Width="16" Height="16" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
         <Rectangle Width="16" Height="16" SnapsToDevicePixels="True">
             <Rectangle.Fill>
@@ -104,4 +107,18 @@
             </Trigger>
         </Style.Triggers>
     </Style>
+
+    <Storyboard x:Key="FadeInOut">
+        <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="Opacity">
+            <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+            <EasingDoubleKeyFrame KeyTime="0:0:0.25" Value="1"/>
+            <EasingDoubleKeyFrame KeyTime="0:0:4" Value="1"/>
+            <EasingDoubleKeyFrame KeyTime="0:0:5" Value="0"/>
+        </DoubleAnimationUsingKeyFrames>
+        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)">
+            <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}"/>
+            <DiscreteObjectKeyFrame KeyTime="0:0:5.1" Value="{x:Static Visibility.Hidden}"/>
+        </ObjectAnimationUsingKeyFrames>
+    </Storyboard>
+
 </ResourceDictionary>
