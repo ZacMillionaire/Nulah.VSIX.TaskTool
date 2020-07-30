@@ -13,7 +13,15 @@
     </Page.DataContext>
     <Grid>
         <StackPanel>
+            <TextBlock FontWeight="Bold" FontSize="18">New Task</TextBlock>
             <TextBlock Text="{Binding VMGuid}"/>
+            <TextBlock FontWeight="Bold" FontSize="12">Title</TextBlock>
+            <TextBox ClipToBounds="True" TextWrapping="Wrap"></TextBox>
+            <TextBlock FontWeight="Bold" FontSize="12">Content</TextBlock>
+            <TextBox ClipToBounds="True" TextWrapping="Wrap" MinLines="10"></TextBox>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
+                <Button>Create</Button>
+            </StackPanel>
         </StackPanel>
     </Grid>
 </Page>

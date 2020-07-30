@@ -20,6 +20,8 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager
         private List<Task> _currentTaskList { get; set; }
         private string _currentTaskDatabase;
 
+        public bool IsGlobalDatabaseInUse;
+
         /// <summary>
         /// %APPDATA%/Nulah
         /// </summary>
@@ -31,6 +33,7 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager
             CreateAppDataFolder();
             CreateAppDatabases();
 
+            // Default to using Global database for now
             SwitchDatabase(GLOBAL_DB_DATASOURCE_NAME);
         }
 
@@ -45,22 +48,31 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager
             }
         }
 
+        /// <summary>
+        /// Create first time databases for the extension: application for tracking created task databases, and the global task list
+        /// database
+        /// </summary>
         private void CreateAppDatabases()
         {
             CreateApplicationSettingsDatabase();
-            CreateGlobalTaskListDatabase();
+            CreateDatabase(GLOBAL_DB_DATASOURCE_NAME, "Nulah.TaskList");
         }
 
-        private void CreateGlobalTaskListDatabase()
+        /// <summary>
+        /// Create a database
+        /// </summary>
+        /// <param name="datasourceName"></param>
+        /// <param name="databaseName"></param>
+        public void CreateDatabase(string datasourceName, string databaseName)
         {
-            var globalDb = Path.Combine(_applicationDataLocation, "Nulah.TaskList.sqlitedb");
+            var databaseLocation = Path.Combine(_applicationDataLocation, $"{databaseName}.sqlitedb");
 
-            var databaseCreated = _sqliteProvider.CreateDataSource(GLOBAL_DB_DATASOURCE_NAME, globalDb);
-            // Track the global task list database in the application settings database if this is the first time we're creating it
+            var databaseCreated = _sqliteProvider.CreateDataSource(datasourceName, databaseLocation);
+            // Track the new task list database in the application settings database if this is the first time we're creating it
             if (databaseCreated == true)
             {
-                _sqliteProvider.CreateTable<Task>(GLOBAL_DB_DATASOURCE_NAME);
-                CreateDatabaseEntry(globalDb);
+                _sqliteProvider.CreateTable<Task>(datasourceName);
+                CreateDatabaseEntry(databaseLocation);
             }
         }
 
@@ -85,10 +97,33 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager
                 });
         }
 
+        /// <summary>
+        /// Change the active database for tasks to the new database
+        /// </summary>
+        /// <param name="newDatabase"></param>
         public void SwitchDatabase(string newDatabase)
         {
-            _currentTaskDatabase = newDatabase;
-            LoadTasksForCurrentDatabase(newDatabase);
+            if (_sqliteProvider.DataSourceExists(newDatabase))
+            {
+                _currentTaskDatabase = newDatabase;
+                IsGlobalDatabaseInUse = _currentTaskDatabase == GLOBAL_DB_DATASOURCE_NAME;
+
+                LoadTasksForCurrentDatabase(newDatabase);
+            }
+            else
+            {
+                throw new Exception($"{newDatabase} does not exist");
+            }
+        }
+
+        public string GetCurrentDatabase()
+        {
+            if (IsGlobalDatabaseInUse == true)
+            {
+                return "Global";
+            }
+
+            return $"Solution - {_currentTaskDatabase}";
         }
 
         private void LoadTasksForCurrentDatabase(string taskDatabase)

@@ -30,8 +30,7 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager.Controls
 
         public void Init()
         {
-            BackToTaskListButton.Visibility = Visibility.Collapsed;
-            NewTaskTitle.Visibility = Visibility.Collapsed;
+            BackToTaskListButton.IsEnabled = false;
 
             TaskPageFrame.Content = new TaskListPage();
             TaskPageFrame.ContentRendered += TaskPageFrame_ContentRendered;
@@ -41,17 +40,15 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager.Controls
         {
             if (TaskPageFrame.CanGoBack == true)
             {
-                NewTaskButton.Visibility = Visibility.Collapsed;
+                NewTaskButton.IsEnabled = false;
 
-                NewTaskTitle.Visibility = Visibility.Visible;
-                BackToTaskListButton.Visibility = Visibility.Visible;
+                BackToTaskListButton.IsEnabled = true;
             }
             else
             {
-                NewTaskButton.Visibility = Visibility.Visible;
+                NewTaskButton.IsEnabled = true;
 
-                NewTaskTitle.Visibility = Visibility.Collapsed;
-                BackToTaskListButton.Visibility = Visibility.Collapsed;
+                BackToTaskListButton.IsEnabled = false;
             }
         }
 

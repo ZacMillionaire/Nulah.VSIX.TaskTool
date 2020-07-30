@@ -6,15 +6,180 @@
       xmlns:local="clr-namespace:Nulah.VSIX.TaskTool.ToolWindows.TaskManager.Controls.Pages"
       xmlns:ViewModel="clr-namespace:Nulah.VSIX.TaskTool.ToolWindows.TaskManager.ViewModels.Pages"
       mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
+      d:DesignHeight="450" d:DesignWidth="205.41"
       Title="TaskListPage">
     <Page.DataContext>
         <ViewModel:TaskListPageViewModel/>
     </Page.DataContext>
-    <Grid>
-        <StackPanel>
-            <TextBlock Text="{Binding VMGuid}"></TextBlock>
-            <TextBlock>Task2</TextBlock>
-        </StackPanel>
-    </Grid>
+    <StackPanel>
+        <ItemsControl>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Border SnapsToDevicePixels="True" BorderThickness="0,1" BorderBrush="Black" Background="White" Margin="0,0,0,5">
+                        <StackPanel Margin="0,0,0,0">
+                            <Border SnapsToDevicePixels="True" BorderThickness="0,0,0,1" BorderBrush="Gray" Padding="5">
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Style.Setters>
+                                            <Setter Property="Background" Value="AliceBlue"/>
+                                        </Style.Setters>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding InProgress}" Value="True">
+                                                <Setter Property="Background" Value="CornflowerBlue"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding IsComplete}" Value="True">
+                                                <Setter Property="Background" Value="LightGreen"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                                <TextBlock TextWrapping="Wrap" Grid.Column="0" Text="{Binding Title}" FontWeight="Bold" />
+                            </Border>
+                            <Border SnapsToDevicePixels="True" BorderThickness="0,0,0,1" BorderBrush="LightGray" Padding="2">
+                                <Grid HorizontalAlignment="Right">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="auto"/>
+                                        <ColumnDefinition Width="auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <CheckBox Grid.Column="0" IsChecked="{Binding InProgress}">
+                                        <TextBlock TextWrapping="Wrap">In Progress</TextBlock>
+                                    </CheckBox>
+                                    <CheckBox Grid.Column="1" IsChecked="{Binding IsComplete}">
+                                        <TextBlock TextWrapping="Wrap">Complete</TextBlock>
+                                    </CheckBox>
+                                </Grid>
+                            </Border>
+                            <TextBlock Padding="5" TextWrapping="Wrap" Text="{Binding Content}" />
+                        </StackPanel>
+                    </Border>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+            <ViewModel:TaskListDisplayItem 
+                Title="asdfas asdf asf asf asfsda fsaf asf asdf saf af asf d" 
+                Content="asdfa asdf asdf asf aweert sadf asdf sadfaert aw3rt5 aoieutr kajsdhfasldf"
+                InProgress="True"
+                IsComplete="False"
+                />
+            <ViewModel:TaskListDisplayItem 
+                Title="asdfas asdf asf asf asfsda fsaf asf asdf saf af asf d" 
+                Content="asdfa asdf asdf asf aweert sadf asdf sadfaert aw3rt5 aoieutr kajsdhfasldf"
+                InProgress="False"
+                IsComplete="True"
+                />
+            <ViewModel:TaskListDisplayItem 
+                Title="asdfas asdf asf asf asfsda fsaf asf asdf saf af asf d" 
+                Content="asdfa asdf asdf asf aweert sadf asdf sadfaert aw3rt5 aoieutr kajsdhfasldf"
+                InProgress="False"
+                IsComplete="False"
+                />
+            <ViewModel:TaskListDisplayItem 
+                Title="asdfas asdf asf asf asfsda fsaf asf asdf saf af asf d" 
+                Content="asdfa asdf asdf asf aweert sadf asdf sadfaert aw3rt5 aoieutr kajsdhfasldf"
+                InProgress="True"
+                IsComplete="False"
+                />
+            <ViewModel:TaskListDisplayItem 
+                Title="asdfas asdf asf asf asfsda fsaf asf asdf saf af asf d" 
+                Content="asdfa asdf asdf asf aweert sadf asdf sadfaert aw3rt5 aoieutr kajsdhfasldf"
+                InProgress="False"
+                IsComplete="True"
+                />
+            <ViewModel:TaskListDisplayItem 
+                Title="asdfas asdf asf asf asfsda fsaf asf asdf saf af asf d" 
+                Content="asdfa asdf asdf asf aweert sadf asdf sadfaert aw3rt5 aoieutr kajsdhfasldf"
+                InProgress="False"
+                IsComplete="False"
+                />
+            <ViewModel:TaskListDisplayItem 
+                Title="asdfas asdf asf asf asfsda fsaf asf asdf saf af asf d" 
+                Content="asdfa asdf asdf asf aweert sadf asdf sadfaert aw3rt5 aoieutr kajsdhfasldf"
+                InProgress="True"
+                IsComplete="False"
+                />
+            <ViewModel:TaskListDisplayItem 
+                Title="asdfas asdf asf asf asfsda fsaf asf asdf saf af asf d" 
+                Content="asdfa asdf asdf asf aweert sadf asdf sadfaert aw3rt5 aoieutr kajsdhfasldf"
+                InProgress="False"
+                IsComplete="True"
+                />
+            <ViewModel:TaskListDisplayItem 
+                Title="asdfas asdf asf asf asfsda fsaf asf asdf saf af asf d" 
+                Content="asdfa asdf asdf asf aweert sadf asdf sadfaert aw3rt5 aoieutr kajsdhfasldf"
+                InProgress="False"
+                IsComplete="False"
+                />
+            <ViewModel:TaskListDisplayItem 
+                Title="asdfas asdf asf asf asfsda fsaf asf asdf saf af asf d" 
+                Content="asdfa asdf asdf asf aweert sadf asdf sadfaert aw3rt5 aoieutr kajsdhfasldf"
+                InProgress="True"
+                IsComplete="False"
+                />
+            <ViewModel:TaskListDisplayItem 
+                Title="asdfas asdf asf asf asfsda fsaf asf asdf saf af asf d" 
+                Content="asdfa asdf asdf asf aweert sadf asdf sadfaert aw3rt5 aoieutr kajsdhfasldf"
+                InProgress="False"
+                IsComplete="True"
+                />
+            <ViewModel:TaskListDisplayItem 
+                Title="asdfas asdf asf asf asfsda fsaf asf asdf saf af asf d" 
+                Content="asdfa asdf asdf asf aweert sadf asdf sadfaert aw3rt5 aoieutr kajsdhfasldf"
+                InProgress="False"
+                IsComplete="False"
+                />
+            <ViewModel:TaskListDisplayItem 
+                Title="asdfas asdf asf asf asfsda fsaf asf asdf saf af asf d" 
+                Content="asdfa asdf asdf asf aweert sadf asdf sadfaert aw3rt5 aoieutr kajsdhfasldf"
+                InProgress="True"
+                IsComplete="False"
+                />
+            <ViewModel:TaskListDisplayItem 
+                Title="asdfas asdf asf asf asfsda fsaf asf asdf saf af asf d" 
+                Content="asdfa asdf asdf asf aweert sadf asdf sadfaert aw3rt5 aoieutr kajsdhfasldf"
+                InProgress="False"
+                IsComplete="True"
+                />
+            <ViewModel:TaskListDisplayItem 
+                Title="asdfas asdf asf asf asfsda fsaf asf asdf saf af asf d" 
+                Content="asdfa asdf asdf asf aweert sadf asdf sadfaert aw3rt5 aoieutr kajsdhfasldf"
+                InProgress="False"
+                IsComplete="False"
+                />
+            <ViewModel:TaskListDisplayItem 
+                Title="asdfas asdf asf asf asfsda fsaf asf asdf saf af asf d" 
+                Content="asdfa asdf asdf asf aweert sadf asdf sadfaert aw3rt5 aoieutr kajsdhfasldf"
+                InProgress="True"
+                IsComplete="False"
+                />
+            <ViewModel:TaskListDisplayItem 
+                Title="asdfas asdf asf asf asfsda fsaf asf asdf saf af asf d" 
+                Content="asdfa asdf asdf asf aweert sadf asdf sadfaert aw3rt5 aoieutr kajsdhfasldf"
+                InProgress="False"
+                IsComplete="True"
+                />
+            <ViewModel:TaskListDisplayItem 
+                Title="asdfas asdf asf asf asfsda fsaf asf asdf saf af asf d" 
+                Content="asdfa asdf asdf asf aweert sadf asdf sadfaert aw3rt5 aoieutr kajsdhfasldf"
+                InProgress="False"
+                IsComplete="False"
+                />
+            <ViewModel:TaskListDisplayItem 
+                Title="asdfas asdf asf asf asfsda fsaf asf asdf saf af asf d" 
+                Content="asdfa asdf asdf asf aweert sadf asdf sadfaert aw3rt5 aoieutr kajsdhfasldf"
+                InProgress="True"
+                IsComplete="False"
+                />
+            <ViewModel:TaskListDisplayItem 
+                Title="asdfas asdf asf asf asfsda fsaf asf asdf saf af asf d" 
+                Content="asdfa asdf asdf asf aweert sadf asdf sadfaert aw3rt5 aoieutr kajsdhfasldf"
+                InProgress="False"
+                IsComplete="True"
+                />
+            <ViewModel:TaskListDisplayItem 
+                Title="asdfas asdf asf asf asfsda fsaf asf asdf saf af asf d" 
+                Content="asdfa asdf asdf asf aweert sadf asdf sadfaert aw3rt5 aoieutr kajsdhfasldf"
+                InProgress="False"
+                IsComplete="False"
+                />
+        </ItemsControl>
+    </StackPanel>
 </Page>

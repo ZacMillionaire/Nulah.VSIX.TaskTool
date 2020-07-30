@@ -80,6 +80,11 @@ namespace Nulah.VSIX.TaskTool.Data
             return createdNewDatabase;
         }
 
+        public bool DataSourceExists(string sourceName)
+        {
+            return _dataSourceConnectionStrings.ContainsKey(sourceName);
+        }
+
         private SQLiteConnection GetConnection(string sourceName)
         {
             return new SQLiteConnection(_dataSourceConnectionStrings[sourceName]);

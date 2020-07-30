@@ -6,6 +6,7 @@
              xmlns:local="clr-namespace:Nulah.VSIX.TaskTool.ToolWindows.TaskManager.Controls"
              xmlns:Pages="clr-namespace:Nulah.VSIX.TaskTool.ToolWindows.TaskManager.Controls.Pages"
              xmlns:ViewModel="clr-namespace:Nulah.VSIX.TaskTool.ToolWindows.TaskManager.ViewModels"
+             xmlns:NulahControl="clr-namespace:Nulah.VSIX.TaskTool.ToolWindows.TaskManager.Controls"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.DataContext>
@@ -17,20 +18,20 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
-            <RowDefinition/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Grid Grid.Row="0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition />
-                <ColumnDefinition Width="auto"/>
-            </Grid.ColumnDefinitions>
-            <Button x:Name="BackToTaskListButton" Grid.Column="0" HorizontalAlignment="Left" Style="{StaticResource ResourceKey=UI_Back_Button}" Click="BackToTaskListButton_Click"></Button>
-            <TextBlock x:Name="NewTaskTitle" HorizontalAlignment="Right" Grid.Column="1" FontWeight="Bold" VerticalAlignment="Center">Create New Task</TextBlock>
-            <Button x:Name="NewTaskButton" Grid.Column="2" Style="{StaticResource ResourceKey=UI_Add_Item_Button}" Click="NewTaskButton_Click"/>
-        </Grid>
-        <StackPanel Grid.Row="1">
-            <Frame x:Name="TaskPageFrame" NavigationUIVisibility="Hidden" d:DataContext="{d:DesignInstance Type=Pages:TaskListPage, IsDesignTimeCreatable=True}" Content="{Binding}"/>
-        </StackPanel>
+        <ToolBarTray SnapsToDevicePixels="True" Grid.Row="0" IsLocked="True">
+            <ToolBar VerticalAlignment="Center">
+                <Button x:Name="BackToTaskListButton" IsEnabled="False" Style="{StaticResource ResourceKey=UI_Back_Button}" Click="BackToTaskListButton_Click"/>
+                <Button x:Name="NewTaskButton" Style="{StaticResource ResourceKey=UI_Add_Item_Button}" Click="NewTaskButton_Click"/>
+            </ToolBar>
+            <ToolBar VerticalAlignment="Center">
+                <TextBlock Margin="5,0" VerticalAlignment="Center">Task List</TextBlock>
+                <NulahControl:DatabaseSelectControl/>
+            </ToolBar>
+        </ToolBarTray>
+        <ScrollViewer Grid.Row="1">
+            <Frame x:Name="TaskPageFrame" NavigationUIVisibility="Hidden" d:DataContext="{d:DesignInstance Type=Pages:TaskListPage, IsDesignTimeCreatable=True}" Content="{Binding}" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Disabled"/>
+        </ScrollViewer>
     </Grid>
 </UserControl>

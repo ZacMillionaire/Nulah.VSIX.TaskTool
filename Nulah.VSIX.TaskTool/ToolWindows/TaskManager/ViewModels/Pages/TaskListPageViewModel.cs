@@ -23,4 +23,12 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager.ViewModels.Pages
             VMGuid = Guid.NewGuid();
         }
     }
+    public class TaskListDisplayItem
+    {
+        public Guid Id { get; set; }
+        public string Title { get; set; }
+        public string Content { get; set; }
+        public bool IsComplete { get; set; }
+        public bool InProgress { get; set; }
+    }
 }

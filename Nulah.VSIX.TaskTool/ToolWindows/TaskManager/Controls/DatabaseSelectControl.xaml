@@ -10,10 +10,38 @@
     <UserControl.DataContext>
         <ViewModel:DatabaseSelectViewModel/>
     </UserControl.DataContext>
-    <Grid>
-        <StackPanel>
-            <Button Command="{Binding Path=UseGlobalTaskStoreCommand}">Switch to Global Task List</Button>
-            <Button Command="{Binding Path=CreateSolutionTaskStoreCommand}">Create Task List for Current Solution</Button>
-        </StackPanel>
-    </Grid>
+    <StackPanel x:Name="stackpanel">
+        <ComboBox IsEnabled="False">
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{Binding Content}"></TextBlock>
+                    </StackPanel>
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+            <ComboBoxItem Content="Global" IsSelected="True"></ComboBoxItem>
+            <ComboBoxItem Content="Use Solution" IsEnabled="False"></ComboBoxItem>
+        </ComboBox>
+        <!--
+        <Button x:Name="TaskSourceButton">Change Task Source</Button>
+        <Popup IsOpen="True" AllowsTransparency="True">
+            <Border BorderBrush="Black" BorderThickness="1,0,1,1" Background="White">
+                <StackPanel>
+                    <Button HorizontalAlignment="Left" Command="{Binding Path=UseGlobalTaskStoreCommand}">
+                        <Button.Style>
+                            <Style TargetType="Button">
+                                <Style.Setters>
+                                    <Setter Property="BorderThickness" Value="0" />
+                                    <Setter Property="Background" Value="Transparent"></Setter>
+                                </Style.Setters>
+                            </Style>
+                        </Button.Style>
+                        <TextBlock FontWeight="Bold">Global</TextBlock>
+                    </Button>
+                    <Button Command="{Binding Path=CreateSolutionTaskStoreCommand}">Create Task List for Current Solution</Button>
+                </StackPanel>
+            </Border>
+        </Popup>
+        -->
+    </StackPanel>
 </UserControl>

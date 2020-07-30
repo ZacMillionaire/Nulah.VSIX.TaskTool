@@ -15,11 +15,11 @@
         <ViewModel:TaskManagerMainViewModel/>
     </UserControl.DataContext>
     <Grid>
-        <StackPanel Orientation="Vertical">
-            <NulahControl:DatabaseSelectControl/>
-            <NulahControl:TaskListControl/>
-            <TextBlock Margin="10" HorizontalAlignment="Center">TaskManagerWindow</TextBlock>
-            <Button Content="Click me!" Click="button1_Click" Width="120" Height="80" Name="button1"/>
-        </StackPanel>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition  Height="auto"/>
+        </Grid.RowDefinitions>
+        <NulahControl:TaskListControl Grid.Row="0"/>
+        <Button Grid.Row="1" Content="Click me!" Click="button1_Click" Width="120" Height="80" Name="button1"/>
     </Grid>
 </UserControl>
