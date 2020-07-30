@@ -160,5 +160,35 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager
 
             return insert;
         }
+
+        public bool UpdateTaskProgressState(Guid taskId, bool progressState)
+        {
+            var update = _sqliteProvider.Update<Task>(_currentTaskDatabase,
+                $"UPDATE [{nameof(Task)}] SET [{nameof(Task.InProgress)}] = @{nameof(Task.InProgress)}, [{nameof(Task.UpdatedUTC)}] = @{nameof(Task.UpdatedUTC)} WHERE [{nameof(Task.Id)}] = @{nameof(Task.Id)}",
+                new
+                {
+                    Id = taskId,
+                    InProgress = progressState,
+                    UpdatedUTC = NulahStandardLib.DateTimeNow()
+                });
+            LoadTasksForCurrentDatabase(_currentTaskDatabase);
+            return update;
+        }
+
+        public bool UpdateTaskCompletedState(Guid taskId, bool completedState)
+        {
+            var taskProps = NulahStandardLib.GetPropertiesForType<Task>();
+            var update = _sqliteProvider.Update<Task>(_currentTaskDatabase,
+                $"UPDATE [{nameof(Task)}] SET [{nameof(Task.IsComplete)}] = @{nameof(Task.IsComplete)}, [{nameof(Task.UpdatedUTC)}] = @{nameof(Task.UpdatedUTC)} WHERE [{nameof(Task.Id)}] = @{nameof(Task.Id)}",
+                new
+                {
+                    Id = taskId,
+                    IsComplete = completedState,
+                    UpdatedUTC = NulahStandardLib.DateTimeNow()
+                });
+            LoadTasksForCurrentDatabase(_currentTaskDatabase);
+            return update;
+        }
+
     }
 }

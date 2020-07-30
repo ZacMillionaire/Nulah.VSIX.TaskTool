@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 using Nulah.VSIX.TaskTool.StandardLib.Models;
 
@@ -19,8 +21,13 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager.ViewModels.Pages
             set { _taskListDisplayItems = value; OnPropertyChanged(nameof(Tasks)); }
         }
 
+        public ICommand InProgressChangeCommand { get; private set; }
+        public ICommand IsCompleteChangeCommand { get; private set; }
+
         public TaskListPageViewModel()
         {
+            InProgressChangeCommand = new RelayCommand(taskListDisplayItem => InProgressCheckedChanged(taskListDisplayItem as TaskListDisplayItem), x => true);
+            IsCompleteChangeCommand = new RelayCommand(taskListDisplayItem => IsCompletedCheckedChanged(taskListDisplayItem as TaskListDisplayItem), x => true);
         }
 
         /// <summary>
@@ -43,6 +50,16 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager.ViewModels.Pages
                     IsComplete = x.IsComplete
                 })
                 .ToList();
+        }
+
+        private void InProgressCheckedChanged(TaskListDisplayItem taskListDisplayItem)
+        {
+            bool a = GetDependency<TaskListManager>().UpdateTaskProgressState(taskListDisplayItem.Id, taskListDisplayItem.InProgress);
+        }
+
+        private void IsCompletedCheckedChanged(TaskListDisplayItem taskListDisplayItem)
+        {
+            bool a = GetDependency<TaskListManager>().UpdateTaskCompletedState(taskListDisplayItem.Id, taskListDisplayItem.IsComplete);
         }
     }
 

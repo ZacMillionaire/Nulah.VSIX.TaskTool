@@ -398,6 +398,28 @@ namespace Nulah.VSIX.TaskTool.Data
                 }
             }
         }
+        public bool Update<T>(string dataStore, string query, object queryObject)
+        {
+            using (var conn = GetConnection(dataStore))
+            {
+                conn.Open();
+                using (var cmd = new SQLiteCommand(query, conn))
+                {
+                    var objectParams = NulahStandardLib.GetPropertiesAndValuesForObject(queryObject);
+                    foreach (var param in objectParams)
+                    {
+                        AddValueToQueryParameters(param.Key, param.Value, cmd.Parameters);
+                    }
+                    var update = cmd.ExecuteNonQuery();
+                    if (update > 0)
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
 
         public void Truncate<T>(string dataStore)
         {
