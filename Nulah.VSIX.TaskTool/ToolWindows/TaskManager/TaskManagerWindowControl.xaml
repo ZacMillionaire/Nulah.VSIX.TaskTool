@@ -6,11 +6,18 @@
              xmlns:vsshell="clr-namespace:Microsoft.VisualStudio.Shell;assembly=Microsoft.VisualStudio.Shell.15.0"
              Background="{DynamicResource {x:Static vsshell:VsBrushes.WindowKey}}"
              Foreground="{DynamicResource {x:Static vsshell:VsBrushes.WindowTextKey}}"
+             xmlns:ViewModel="clr-namespace:Nulah.VSIX.TaskTool.ToolWindows.TaskManager.ViewModels"
+             xmlns:NulahControl="clr-namespace:Nulah.VSIX.TaskTool.ToolWindows.TaskManager.Controls"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300"
              Name="MyToolWindow">
+    <UserControl.DataContext>
+        <ViewModel:TaskManagerMainViewModel/>
+    </UserControl.DataContext>
     <Grid>
         <StackPanel Orientation="Vertical">
+            <NulahControl:DatabaseSelectControl/>
+            <NulahControl:TaskListControl/>
             <TextBlock Margin="10" HorizontalAlignment="Center">TaskManagerWindow</TextBlock>
             <Button Content="Click me!" Click="button1_Click" Width="120" Height="80" Name="button1"/>
         </StackPanel>

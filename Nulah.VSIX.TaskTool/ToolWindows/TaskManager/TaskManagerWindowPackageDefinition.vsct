@@ -70,7 +70,7 @@
           If you do not want an image next to your command, remove the Icon node /> -->
       <Button guid="guidNulahTaskManagerCmdSet" id="TaskManagerCommandId" priority="0x0100" type="Button">
         <Parent guid="guidNulahTaskManagerCmdSet" id="TaskManagerSubGroup"/>
-        <Icon guid="guidImages" id="bmpPic1" />
+        <Icon guid="guidImages" id="bmpPicX" />
         <Strings>
           <ButtonText>Show Task List</ButtonText>
         </Strings>

@@ -1,9 +1,11 @@
-﻿namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager
-{
-    using System.Diagnostics.CodeAnalysis;
-    using System.Windows;
-    using System.Windows.Controls;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Windows;
+using System.Windows.Controls;
 
+using Nulah.VSIX.TaskTool.StandardLib.Models;
+
+namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager
+{
     /// <summary>
     /// Interaction logic for TaskManagerWindowControl.
     /// </summary>

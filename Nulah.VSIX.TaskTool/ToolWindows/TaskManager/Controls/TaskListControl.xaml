@@ -1,0 +1,36 @@
+﻿<UserControl x:Class="Nulah.VSIX.TaskTool.ToolWindows.TaskManager.Controls.TaskListControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Nulah.VSIX.TaskTool.ToolWindows.TaskManager.Controls"
+             xmlns:Pages="clr-namespace:Nulah.VSIX.TaskTool.ToolWindows.TaskManager.Controls.Pages"
+             xmlns:ViewModel="clr-namespace:Nulah.VSIX.TaskTool.ToolWindows.TaskManager.ViewModels"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.DataContext>
+        <ViewModel:TaskListViewModel/>
+    </UserControl.DataContext>
+    <UserControl.Resources>
+        <ResourceDictionary Source="pack://application:,,,/Nulah.VSIX.TaskTool;component/IconResources.xaml" />
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+            <Button x:Name="BackToTaskListButton" Grid.Column="0" HorizontalAlignment="Left" Style="{StaticResource ResourceKey=UI_Back_Button}" Click="BackToTaskListButton_Click"></Button>
+            <TextBlock x:Name="NewTaskTitle" HorizontalAlignment="Right" Grid.Column="1" FontWeight="Bold" VerticalAlignment="Center">Create New Task</TextBlock>
+            <Button x:Name="NewTaskButton" Grid.Column="2" Style="{StaticResource ResourceKey=UI_Add_Item_Button}" Click="NewTaskButton_Click"/>
+        </Grid>
+        <StackPanel Grid.Row="1">
+            <Frame x:Name="TaskPageFrame" NavigationUIVisibility="Hidden" d:DataContext="{d:DesignInstance Type=Pages:TaskListPage, IsDesignTimeCreatable=True}" Content="{Binding}"/>
+        </StackPanel>
+    </Grid>
+</UserControl>
