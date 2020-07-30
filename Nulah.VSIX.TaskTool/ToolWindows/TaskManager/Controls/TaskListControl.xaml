@@ -30,7 +30,7 @@
                 <NulahControl:DatabaseSelectControl/>
             </ToolBar>
         </ToolBarTray>
-        <ScrollViewer Grid.Row="1">
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
             <Frame x:Name="TaskPageFrame" NavigationUIVisibility="Hidden" d:DataContext="{d:DesignInstance Type=Pages:TaskListPage, IsDesignTimeCreatable=True}" Content="{Binding}" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Disabled"/>
         </ScrollViewer>
     </Grid>

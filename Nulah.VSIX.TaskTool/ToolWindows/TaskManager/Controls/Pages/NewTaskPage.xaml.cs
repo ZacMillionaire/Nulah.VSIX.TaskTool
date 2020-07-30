@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,6 +24,19 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager.Controls.Pages
         public NewTaskPage()
         {
             InitializeComponent();
+        }
+    }
+
+    public class IsStringNullOrEmptyConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return string.IsNullOrWhiteSpace(value as string);
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new InvalidOperationException("IsStringNullOrEmptyConverter can only be used OneWay.");
         }
     }
 }

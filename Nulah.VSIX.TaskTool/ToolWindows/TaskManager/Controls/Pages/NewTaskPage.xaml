@@ -11,16 +11,46 @@
     <Page.DataContext>
         <ViewModel:NewTaskPageViewModel/>
     </Page.DataContext>
+    <Page.Resources>
+        <local:IsStringNullOrEmptyConverter x:Key="IsNullConverter"/>
+        <Storyboard x:Key="FadeInOut">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="Opacity">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.25" Value="1"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:4" Value="1"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:5" Value="0"/>
+            </DoubleAnimationUsingKeyFrames>
+            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)">
+                <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}"/>
+                <DiscreteObjectKeyFrame KeyTime="0:0:5.1" Value="{x:Static Visibility.Hidden}"/>
+            </ObjectAnimationUsingKeyFrames>
+        </Storyboard>
+    </Page.Resources>
     <Grid>
         <StackPanel>
             <TextBlock FontWeight="Bold" FontSize="18">New Task</TextBlock>
-            <TextBlock Text="{Binding VMGuid}"/>
             <TextBlock FontWeight="Bold" FontSize="12">Title</TextBlock>
-            <TextBox ClipToBounds="True" TextWrapping="Wrap"></TextBox>
+            <TextBox Text="{Binding TaskTitle, UpdateSourceTrigger=PropertyChanged}" ClipToBounds="True" TextWrapping="Wrap"></TextBox>
             <TextBlock FontWeight="Bold" FontSize="12">Content</TextBlock>
-            <TextBox ClipToBounds="True" TextWrapping="Wrap" MinLines="10"></TextBox>
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
-                <Button>Create</Button>
+            <TextBox Text="{Binding TaskContent,UpdateSourceTrigger=PropertyChanged}"  ClipToBounds="True" TextWrapping="Wrap" MinLines="10"></TextBox>
+            <StackPanel x:Name="StatusTextPanel" Visibility="Hidden" Margin="0,5">
+                <StackPanel.Style>
+                    <Style>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding ResultMessage, Converter={StaticResource IsNullConverter}}" Value="False">
+                                <DataTrigger.EnterActions>
+                                    <BeginStoryboard Storyboard="{StaticResource FadeInOut}"/>
+                                </DataTrigger.EnterActions>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </StackPanel.Style>
+                <Border Background="LightGreen" BorderBrush="Green" BorderThickness="0,1">
+                    <TextBlock x:Name="StatusText" HorizontalAlignment="Center" Text="{Binding ResultMessage, NotifyOnTargetUpdated=True}"/>
+                </Border>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button IsEnabled="{Binding IsCreateEnabled}" Command="{Binding CreateNewTaskCommand}">Create</Button>
             </StackPanel>
         </StackPanel>
     </Grid>

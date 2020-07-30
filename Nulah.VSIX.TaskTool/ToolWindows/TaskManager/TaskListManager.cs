@@ -27,6 +27,9 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager
         /// </summary>
         private string _applicationDataLocation = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Nulah");
 
+        /// <summary>
+        /// Starts a new TaskListManager and defaults to the global task list, and loads all tasks in the database
+        /// </summary>
         public TaskListManager()
         {
             _sqliteProvider = new SqliteProvider();
@@ -98,7 +101,7 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager
         }
 
         /// <summary>
-        /// Change the active database for tasks to the new database
+        /// Change the active database for tasks to the new database, and loads all tasks stored
         /// </summary>
         /// <param name="newDatabase"></param>
         public void SwitchDatabase(string newDatabase)
@@ -131,9 +134,31 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager
             _currentTaskList = _sqliteProvider.Query<Task>(taskDatabase, $"SELECT * FROM [{nameof(Task)}] ORDER BY [{nameof(Task.CreatedUTC)}] DESC");
         }
 
-        public List<Task> GetTask()
+        /// <summary>
+        /// Returns all tasks for the currently selected database
+        /// </summary>
+        /// <returns></returns>
+        public List<Task> GetTasks()
         {
             return _currentTaskList;
+        }
+
+        public bool CreateTask(string title, string content)
+        {
+            var taskProps = NulahStandardLib.GetPropertiesForType<Task>();
+            var insert = _sqliteProvider.Insert<Task>(_currentTaskDatabase,
+                $"INSERT INTO [{nameof(Task)}] ({string.Join(", ", taskProps.Select(x => $"[{ x.Name}]"))}) VALUES ({string.Join(",", taskProps.Select(x => $"@{x.Name}"))})",
+                new Task
+                {
+                    Content = content,
+                    Title = title,
+                    CreatedUTC = NulahStandardLib.DateTimeNow(),
+                    Id = Guid.NewGuid()
+                });
+
+            LoadTasksForCurrentDatabase(_currentTaskDatabase);
+
+            return insert;
         }
     }
 }

@@ -10,19 +10,42 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager.ViewModels.Pages
 {
     public class TaskListPageViewModel : ViewModelBase
     {
-        private Guid _VMGuid;
 
-        public Guid VMGuid
+        private List<TaskListDisplayItem> _taskListDisplayItems;
+
+        public List<TaskListDisplayItem> Tasks
         {
-            get { return _VMGuid; }
-            set { _VMGuid = value; base.OnPropertyChanged(nameof(VMGuid)); }
+            get { return _taskListDisplayItems; }
+            set { _taskListDisplayItems = value; OnPropertyChanged(nameof(Tasks)); }
         }
 
         public TaskListPageViewModel()
         {
-            VMGuid = Guid.NewGuid();
+        }
+
+        /// <summary>
+        /// Called whenever the page this viewmodel is attached to is loaded, eg: frame navigation events or being set as content
+        /// </summary>
+        public void OnPageLoaded()
+        {
+            GetTaskList();
+        }
+
+        private void GetTaskList()
+        {
+            Tasks = GetDependency<TaskListManager>().GetTasks()
+                .Select(x => new TaskListDisplayItem
+                {
+                    Id = x.Id,
+                    Content = x.Content,
+                    Title = x.Title,
+                    InProgress = x.InProgress,
+                    IsComplete = x.IsComplete
+                })
+                .ToList();
         }
     }
+
     public class TaskListDisplayItem
     {
         public Guid Id { get; set; }

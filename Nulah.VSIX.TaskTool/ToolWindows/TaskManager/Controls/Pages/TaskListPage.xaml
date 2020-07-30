@@ -7,12 +7,12 @@
       xmlns:ViewModel="clr-namespace:Nulah.VSIX.TaskTool.ToolWindows.TaskManager.ViewModels.Pages"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="205.41"
-      Title="TaskListPage">
+      Title="TaskListPage" Loaded="Page_Loaded">
     <Page.DataContext>
         <ViewModel:TaskListPageViewModel/>
     </Page.DataContext>
     <StackPanel>
-        <ItemsControl>
+        <ItemsControl ItemsSource="{Binding Tasks}">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <Border SnapsToDevicePixels="True" BorderThickness="0,1" BorderBrush="Black" Background="White" Margin="0,0,0,5">
@@ -50,136 +50,13 @@
                                 </Grid>
                             </Border>
                             <TextBlock Padding="5" TextWrapping="Wrap" Text="{Binding Content}" />
+                            <Border>
+
+                            </Border>
                         </StackPanel>
                     </Border>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
-            <ViewModel:TaskListDisplayItem 
-                Title="asdfas asdf asf asf asfsda fsaf asf asdf saf af asf d" 
-                Content="asdfa asdf asdf asf aweert sadf asdf sadfaert aw3rt5 aoieutr kajsdhfasldf"
-                InProgress="True"
-                IsComplete="False"
-                />
-            <ViewModel:TaskListDisplayItem 
-                Title="asdfas asdf asf asf asfsda fsaf asf asdf saf af asf d" 
-                Content="asdfa asdf asdf asf aweert sadf asdf sadfaert aw3rt5 aoieutr kajsdhfasldf"
-                InProgress="False"
-                IsComplete="True"
-                />
-            <ViewModel:TaskListDisplayItem 
-                Title="asdfas asdf asf asf asfsda fsaf asf asdf saf af asf d" 
-                Content="asdfa asdf asdf asf aweert sadf asdf sadfaert aw3rt5 aoieutr kajsdhfasldf"
-                InProgress="False"
-                IsComplete="False"
-                />
-            <ViewModel:TaskListDisplayItem 
-                Title="asdfas asdf asf asf asfsda fsaf asf asdf saf af asf d" 
-                Content="asdfa asdf asdf asf aweert sadf asdf sadfaert aw3rt5 aoieutr kajsdhfasldf"
-                InProgress="True"
-                IsComplete="False"
-                />
-            <ViewModel:TaskListDisplayItem 
-                Title="asdfas asdf asf asf asfsda fsaf asf asdf saf af asf d" 
-                Content="asdfa asdf asdf asf aweert sadf asdf sadfaert aw3rt5 aoieutr kajsdhfasldf"
-                InProgress="False"
-                IsComplete="True"
-                />
-            <ViewModel:TaskListDisplayItem 
-                Title="asdfas asdf asf asf asfsda fsaf asf asdf saf af asf d" 
-                Content="asdfa asdf asdf asf aweert sadf asdf sadfaert aw3rt5 aoieutr kajsdhfasldf"
-                InProgress="False"
-                IsComplete="False"
-                />
-            <ViewModel:TaskListDisplayItem 
-                Title="asdfas asdf asf asf asfsda fsaf asf asdf saf af asf d" 
-                Content="asdfa asdf asdf asf aweert sadf asdf sadfaert aw3rt5 aoieutr kajsdhfasldf"
-                InProgress="True"
-                IsComplete="False"
-                />
-            <ViewModel:TaskListDisplayItem 
-                Title="asdfas asdf asf asf asfsda fsaf asf asdf saf af asf d" 
-                Content="asdfa asdf asdf asf aweert sadf asdf sadfaert aw3rt5 aoieutr kajsdhfasldf"
-                InProgress="False"
-                IsComplete="True"
-                />
-            <ViewModel:TaskListDisplayItem 
-                Title="asdfas asdf asf asf asfsda fsaf asf asdf saf af asf d" 
-                Content="asdfa asdf asdf asf aweert sadf asdf sadfaert aw3rt5 aoieutr kajsdhfasldf"
-                InProgress="False"
-                IsComplete="False"
-                />
-            <ViewModel:TaskListDisplayItem 
-                Title="asdfas asdf asf asf asfsda fsaf asf asdf saf af asf d" 
-                Content="asdfa asdf asdf asf aweert sadf asdf sadfaert aw3rt5 aoieutr kajsdhfasldf"
-                InProgress="True"
-                IsComplete="False"
-                />
-            <ViewModel:TaskListDisplayItem 
-                Title="asdfas asdf asf asf asfsda fsaf asf asdf saf af asf d" 
-                Content="asdfa asdf asdf asf aweert sadf asdf sadfaert aw3rt5 aoieutr kajsdhfasldf"
-                InProgress="False"
-                IsComplete="True"
-                />
-            <ViewModel:TaskListDisplayItem 
-                Title="asdfas asdf asf asf asfsda fsaf asf asdf saf af asf d" 
-                Content="asdfa asdf asdf asf aweert sadf asdf sadfaert aw3rt5 aoieutr kajsdhfasldf"
-                InProgress="False"
-                IsComplete="False"
-                />
-            <ViewModel:TaskListDisplayItem 
-                Title="asdfas asdf asf asf asfsda fsaf asf asdf saf af asf d" 
-                Content="asdfa asdf asdf asf aweert sadf asdf sadfaert aw3rt5 aoieutr kajsdhfasldf"
-                InProgress="True"
-                IsComplete="False"
-                />
-            <ViewModel:TaskListDisplayItem 
-                Title="asdfas asdf asf asf asfsda fsaf asf asdf saf af asf d" 
-                Content="asdfa asdf asdf asf aweert sadf asdf sadfaert aw3rt5 aoieutr kajsdhfasldf"
-                InProgress="False"
-                IsComplete="True"
-                />
-            <ViewModel:TaskListDisplayItem 
-                Title="asdfas asdf asf asf asfsda fsaf asf asdf saf af asf d" 
-                Content="asdfa asdf asdf asf aweert sadf asdf sadfaert aw3rt5 aoieutr kajsdhfasldf"
-                InProgress="False"
-                IsComplete="False"
-                />
-            <ViewModel:TaskListDisplayItem 
-                Title="asdfas asdf asf asf asfsda fsaf asf asdf saf af asf d" 
-                Content="asdfa asdf asdf asf aweert sadf asdf sadfaert aw3rt5 aoieutr kajsdhfasldf"
-                InProgress="True"
-                IsComplete="False"
-                />
-            <ViewModel:TaskListDisplayItem 
-                Title="asdfas asdf asf asf asfsda fsaf asf asdf saf af asf d" 
-                Content="asdfa asdf asdf asf aweert sadf asdf sadfaert aw3rt5 aoieutr kajsdhfasldf"
-                InProgress="False"
-                IsComplete="True"
-                />
-            <ViewModel:TaskListDisplayItem 
-                Title="asdfas asdf asf asf asfsda fsaf asf asdf saf af asf d" 
-                Content="asdfa asdf asdf asf aweert sadf asdf sadfaert aw3rt5 aoieutr kajsdhfasldf"
-                InProgress="False"
-                IsComplete="False"
-                />
-            <ViewModel:TaskListDisplayItem 
-                Title="asdfas asdf asf asf asfsda fsaf asf asdf saf af asf d" 
-                Content="asdfa asdf asdf asf aweert sadf asdf sadfaert aw3rt5 aoieutr kajsdhfasldf"
-                InProgress="True"
-                IsComplete="False"
-                />
-            <ViewModel:TaskListDisplayItem 
-                Title="asdfas asdf asf asf asfsda fsaf asf asdf saf af asf d" 
-                Content="asdfa asdf asdf asf aweert sadf asdf sadfaert aw3rt5 aoieutr kajsdhfasldf"
-                InProgress="False"
-                IsComplete="True"
-                />
-            <ViewModel:TaskListDisplayItem 
-                Title="asdfas asdf asf asf asfsda fsaf asf asdf saf af asf d" 
-                Content="asdfa asdf asdf asf aweert sadf asdf sadfaert aw3rt5 aoieutr kajsdhfasldf"
-                InProgress="False"
-                IsComplete="False"
-                />
         </ItemsControl>
     </StackPanel>
 </Page>

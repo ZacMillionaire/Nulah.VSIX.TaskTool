@@ -13,6 +13,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+using Nulah.VSIX.TaskTool.ToolWindows.TaskManager.ViewModels.Pages;
+
 namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager.Controls.Pages
 {
     /// <summary>
@@ -23,6 +25,11 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager.Controls.Pages
         public TaskListPage()
         {
             InitializeComponent();
+        }
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            ((TaskListPageViewModel)this.DataContext).OnPageLoaded();
         }
     }
 }
