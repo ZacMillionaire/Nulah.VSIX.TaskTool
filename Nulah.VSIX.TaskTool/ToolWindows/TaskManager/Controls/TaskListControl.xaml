@@ -25,13 +25,28 @@
                 <Button x:Name="BackToTaskListButton" IsEnabled="False" Style="{StaticResource ResourceKey=UI_Back_Button}" Click="BackToTaskListButton_Click"/>
                 <Button x:Name="NewTaskButton" Style="{StaticResource ResourceKey=UI_Add_Item_Button}" Click="NewTaskButton_Click"/>
             </ToolBar>
-            <ToolBar VerticalAlignment="Center">
+            <ToolBar VerticalAlignment="Center" >
                 <TextBlock Margin="5,0" VerticalAlignment="Center">Task List</TextBlock>
                 <NulahControl:DatabaseSelectControl/>
             </ToolBar>
+            <ToolBar VerticalAlignment="Center">
+                <ComboBox x:Name="SortOrder" ItemsSource="{Binding SortOptions}" SelectedValue="{Binding SelectedSortOption}" SelectedValuePath="Key">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding Key}"></TextBlock>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+            </ToolBar>
         </ToolBarTray>
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-            <Frame x:Name="TaskPageFrame" NavigationUIVisibility="Hidden" d:DataContext="{d:DesignInstance Type=Pages:TaskListPage, IsDesignTimeCreatable=True}" Content="{Binding}" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Disabled"/>
+            <Frame x:Name="TaskPageFrame" NavigationUIVisibility="Hidden" 
+                   d:DataContext="{d:DesignInstance Type=Pages:TaskListPage, IsDesignTimeCreatable=True}"
+                   Content="{Binding TaskListPageContent}"
+                   ScrollViewer.VerticalScrollBarVisibility="Auto"
+                   ScrollViewer.HorizontalScrollBarVisibility="Disabled"/>
         </ScrollViewer>
     </Grid>
 </UserControl>

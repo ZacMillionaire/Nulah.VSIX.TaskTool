@@ -32,7 +32,6 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager.Controls
         {
             BackToTaskListButton.IsEnabled = false;
 
-            TaskPageFrame.Content = new TaskListPage();
             TaskPageFrame.ContentRendered += TaskPageFrame_ContentRendered;
         }
 
