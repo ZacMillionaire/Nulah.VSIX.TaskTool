@@ -161,29 +161,49 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager
             return insert;
         }
 
+        /// <summary>
+        /// Updates the progress state of the given task by id, and sets IsComplete to false
+        /// </summary>
+        /// <param name="taskId"></param>
+        /// <param name="progressState"></param>
+        /// <returns></returns>
         public bool UpdateTaskProgressState(Guid taskId, bool progressState)
         {
             var update = _sqliteProvider.Update<Task>(_currentTaskDatabase,
-                $"UPDATE [{nameof(Task)}] SET [{nameof(Task.InProgress)}] = @{nameof(Task.InProgress)}, [{nameof(Task.UpdatedUTC)}] = @{nameof(Task.UpdatedUTC)} WHERE [{nameof(Task.Id)}] = @{nameof(Task.Id)}",
+                $"UPDATE [{nameof(Task)}] SET [{nameof(Task.InProgress)}] = @{nameof(Task.InProgress)}" +
+                $", [{nameof(Task.UpdatedUTC)}] = @{nameof(Task.UpdatedUTC)}" +
+                $", [{nameof(Task.IsComplete)}] = @{nameof(Task.IsComplete)}" +
+                $" WHERE [{nameof(Task.Id)}] = @{nameof(Task.Id)}",
                 new
                 {
                     Id = taskId,
                     InProgress = progressState,
+                    IsComplete = false,
                     UpdatedUTC = NulahStandardLib.DateTimeNow()
                 });
             LoadTasksForCurrentDatabase(_currentTaskDatabase);
             return update;
         }
 
+        /// <summary>
+        /// Updates the progress state of the given task by id, and sets InProgress to false
+        /// </summary>
+        /// <param name="taskId"></param>
+        /// <param name="completedState"></param>
+        /// <returns></returns>
         public bool UpdateTaskCompletedState(Guid taskId, bool completedState)
         {
             var taskProps = NulahStandardLib.GetPropertiesForType<Task>();
             var update = _sqliteProvider.Update<Task>(_currentTaskDatabase,
-                $"UPDATE [{nameof(Task)}] SET [{nameof(Task.IsComplete)}] = @{nameof(Task.IsComplete)}, [{nameof(Task.UpdatedUTC)}] = @{nameof(Task.UpdatedUTC)} WHERE [{nameof(Task.Id)}] = @{nameof(Task.Id)}",
+                $"UPDATE [{nameof(Task)}] SET [{nameof(Task.IsComplete)}] = @{nameof(Task.IsComplete)}" +
+                $", [{nameof(Task.UpdatedUTC)}] = @{nameof(Task.UpdatedUTC)}" +
+                $", [{nameof(Task.InProgress)}] = @{nameof(Task.InProgress)}" +
+                $" WHERE [{nameof(Task.Id)}] = @{nameof(Task.Id)}",
                 new
                 {
                     Id = taskId,
                     IsComplete = completedState,
+                    InProgress = false,
                     UpdatedUTC = NulahStandardLib.DateTimeNow()
                 });
             LoadTasksForCurrentDatabase(_currentTaskDatabase);

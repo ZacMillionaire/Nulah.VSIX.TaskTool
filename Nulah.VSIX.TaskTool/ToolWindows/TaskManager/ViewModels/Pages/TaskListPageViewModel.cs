@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,9 +14,9 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager.ViewModels.Pages
     public class TaskListPageViewModel : ViewModelBase
     {
 
-        private List<TaskListDisplayItem> _taskListDisplayItems;
+        private ObservableCollection<TaskListDisplayItem> _taskListDisplayItems;
 
-        public List<TaskListDisplayItem> Tasks
+        public ObservableCollection<TaskListDisplayItem> Tasks
         {
             get { return _taskListDisplayItems; }
             set { _taskListDisplayItems = value; OnPropertyChanged(nameof(Tasks)); }
@@ -70,17 +71,21 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager.ViewModels.Pages
                     CreatedUTC = x.CreatedUTC,
                     UpdatedUTC = x.UpdatedUTC
                 });
-            Tasks = SortTasks(taskList, _currentSortOrder).ToList();
+            Tasks = new ObservableCollection<TaskListDisplayItem>(SortTasks(taskList, _currentSortOrder));
         }
 
         private void InProgressCheckedChanged(TaskListDisplayItem taskListDisplayItem)
         {
             bool a = GetDependency<TaskListManager>().UpdateTaskProgressState(taskListDisplayItem.Id, taskListDisplayItem.InProgress);
+            // Updating task progress sets IsComplete to false, so reflect this on the model
+            taskListDisplayItem.IsComplete = false;
         }
 
         private void IsCompletedCheckedChanged(TaskListDisplayItem taskListDisplayItem)
         {
             bool a = GetDependency<TaskListManager>().UpdateTaskCompletedState(taskListDisplayItem.Id, taskListDisplayItem.IsComplete);
+            // Updating task completion sets InProgress to false, so reflect this on the model
+            taskListDisplayItem.InProgress = false;
         }
 
         public void SortTaskList(TaskListSort newSortOrder)
@@ -90,7 +95,7 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager.ViewModels.Pages
                 return;
             }
 
-            Tasks = SortTasks(_taskListDisplayItems, newSortOrder).ToList();
+            Tasks = new ObservableCollection<TaskListDisplayItem>(SortTasks(_taskListDisplayItems, newSortOrder));
             _currentSortOrder = newSortOrder;
         }
 
@@ -119,14 +124,44 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager.ViewModels.Pages
         UpdatedDesc
     }
 
-    public class TaskListDisplayItem
+    public class TaskListDisplayItem : INotifyPropertyChanged
     {
+        private bool _inProgress;
+        private bool _isComplete;
+
         public Guid Id { get; set; }
         public string Title { get; set; }
         public string Content { get; set; }
-        public bool IsComplete { get; set; }
-        public bool InProgress { get; set; }
+        public bool InProgress
+        {
+            get => _inProgress; set
+            {
+                if (_inProgress != value)
+                {
+                    _inProgress = value;
+                    OnPropertyChanged(nameof(InProgress));
+                }
+            }
+        }
+        public bool IsComplete
+        {
+            get => _isComplete;
+            set
+            {
+                if (_isComplete != value)
+                {
+                    _isComplete = value;
+                    OnPropertyChanged(nameof(IsComplete));
+                }
+            }
+        }
         public DateTime CreatedUTC { get; set; }
         public DateTime UpdatedUTC { get; set; }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }
