@@ -27,9 +27,10 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager.Controls.Pages
             InitializeComponent();
         }
 
-        private void Page_Loaded(object sender, RoutedEventArgs e)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "VSTHRD100:Avoid async void methods", Justification = "Event binding does not support async Task")]
+        private async void Page_LoadedAsync(object sender, RoutedEventArgs e)
         {
-            ((TaskListPageViewModel)this.DataContext).OnPageLoaded();
+            await ((TaskListPageViewModel)this.DataContext).OnPageLoadedAsync();
         }
     }
 }

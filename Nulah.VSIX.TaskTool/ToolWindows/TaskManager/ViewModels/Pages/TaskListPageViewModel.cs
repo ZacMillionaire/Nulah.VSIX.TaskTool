@@ -41,6 +41,23 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager.ViewModels.Pages
 
         private TaskListSort _currentSortOrder;
 
+        private bool _taskListLoading;
+
+        public bool TaskListLoading
+        {
+            get { return _taskListLoading; }
+            set { _taskListLoading = value; OnPropertyChanged(nameof(TaskListLoading)); }
+        }
+
+        private bool _taskListReady;
+
+        public bool TaskListReady
+        {
+            get { return _taskListReady; }
+            set { _taskListReady = value; OnPropertyChanged(nameof(TaskListReady)); }
+        }
+
+
         /// <summary>
         /// Called from a view model to set the default sort order on first load
         /// </summary>
@@ -53,9 +70,17 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager.ViewModels.Pages
         /// <summary>
         /// Called whenever the page this viewmodel is attached to is loaded, eg: frame navigation events or being set as content
         /// </summary>
-        public void OnPageLoaded()
+        public async Task OnPageLoadedAsync()
         {
-            GetTaskList();
+            TaskListLoading = true;
+            TaskListReady = false;
+            // Run GetTaskList as a task to avoid delaying the extension from first rendering
+            await Task.Run(() =>
+            {
+                GetTaskList();
+                TaskListLoading = false;
+                TaskListReady = true;
+            });
         }
 
         private void GetTaskList()
@@ -90,13 +115,14 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager.ViewModels.Pages
 
         public void SortTaskList(TaskListSort newSortOrder)
         {
+            // Update the current sort order as the user may change sort mode as its being loaded
+            _currentSortOrder = newSortOrder;
             if (Tasks == null || Tasks.Count == 0)
             {
                 return;
             }
 
             Tasks = new ObservableCollection<TaskListDisplayItem>(SortTasks(_taskListDisplayItems, newSortOrder));
-            _currentSortOrder = newSortOrder;
         }
 
         private IEnumerable<TaskListDisplayItem> SortTasks(IEnumerable<TaskListDisplayItem> taskList, TaskListSort sortMode)

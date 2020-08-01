@@ -5,6 +5,13 @@
     <SolidColorBrush x:Key="InputFocused" Color="White"/>
     <SolidColorBrush x:Key="InputRequired" Color="Wheat"/>
 
+    <SolidColorBrush x:Key="TaskTitleDefault_Background" Color="AliceBlue"/>
+    <SolidColorBrush x:Key="TaskTitleInProgress_Background" Color="CornflowerBlue"/>
+    <SolidColorBrush x:Key="TaskTitleCompleted_Background" Color="LightGreen"/>
+    <SolidColorBrush x:Key="TaskTitleDisabled_Background" Color="LightGray"/>
+    <SolidColorBrush x:Key="TaskTitleDeleted_Background" Color="Red"/>
+    <SolidColorBrush x:Key="TaskDefault_Background" Color="White"/>
+
     <Viewbox x:Key="UI_Back_Icon" Width="16" Height="16" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
         <Rectangle Width="16" Height="16" SnapsToDevicePixels="True">
             <Rectangle.Fill>

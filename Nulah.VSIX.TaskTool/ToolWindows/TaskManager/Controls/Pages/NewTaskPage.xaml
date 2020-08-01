@@ -53,7 +53,7 @@
                     </Style>
                 </TextBox.Style>
             </TextBox>
-            <StackPanel x:Name="StatusTextPanel" Visibility="Hidden" Margin="0,5">
+            <StackPanel x:Name="StatusTextPanel" Visibility="Hidden" Margin="-5,5" SnapsToDevicePixels="True">
                 <StackPanel.Style>
                     <Style>
                         <Style.Triggers>
