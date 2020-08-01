@@ -47,8 +47,9 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager.ViewModels
         {
             TaskListPageContent = new TaskListPage();
             SortOptions = _vmDataContext.SortOptions;
-            SelectedSortOption = SortOptions.First().Key;
-            _vmDataContext.SetInitialSortOrder(SortOptions[SelectedSortOption]); // TODO: should come from configuration/last used mode maybe? Should persist either way
+            // Look at localising these default values and maybe swap the dictionary around to be <TaskListSort, string>?
+            SelectedSortOption = "Created Descending"; // TODO: should come from a configuration/last used maybe? Should persist either way
+            _vmDataContext.SetInitialSortOrder(SortOptions["Created Descending"]); // TODO: should come from configuration/last used mode maybe? Should persist either way
             // Mark that the viewmodel has been properly intialised
             _viewModelReady = true;
         }
