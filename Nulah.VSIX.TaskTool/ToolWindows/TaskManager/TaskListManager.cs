@@ -18,6 +18,8 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager
         private const string APP_SETTINGS_DB_DATASOURCE_NAME = "APPSETTINGS";
 
         private List<Task> _currentTaskList { get; set; }
+        public bool ListChanged { get; private set; }
+
         private string _currentTaskDatabase;
 
         public bool IsGlobalDatabaseInUse;
@@ -131,6 +133,8 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager
 
         private void LoadTasksForCurrentDatabase(string taskDatabase)
         {
+            // Horribly track if the task list is dirty and that the UI should reload to get latest changes
+            ListChanged = true;
             _currentTaskList = _sqliteProvider.Query<Task>(taskDatabase, $"SELECT * FROM [{nameof(Task)}] ORDER BY [{nameof(Task.CreatedUTC)}] DESC");
         }
 
@@ -140,7 +144,24 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager
         /// <returns></returns>
         public List<Task> GetTasks()
         {
+            ListChanged = false;
             return _currentTaskList;
+        }
+
+        /// <summary>
+        /// Returns the full details of a task by the given task guid, or null if not found in the currently used database
+        /// </summary>
+        /// <param name="taskId"></param>
+        /// <returns></returns>
+        public Task GetTask(Guid taskId)
+        {
+            var taskById = _sqliteProvider.Query<Task>(_currentTaskDatabase, $"SELECT * FROM [{nameof(Task)}] WHERE [{nameof(Task.Id)}] = @TaskGuid",
+                new
+                {
+                    TaskGuid = taskId
+                });
+
+            return taskById.FirstOrDefault();
         }
 
         public bool CreateTask(string title, string content)

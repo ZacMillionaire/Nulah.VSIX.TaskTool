@@ -18,26 +18,25 @@ using Nulah.VSIX.TaskTool.ToolWindows.TaskManager.ViewModels.Pages;
 namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager.Controls.Pages
 {
     /// <summary>
-    /// Interaction logic for TaskListPage.xaml
+    /// Interaction logic for ViewTaskDetailsPage.xaml
     /// </summary>
-    public partial class TaskListPage : Page
+    public partial class ViewTaskDetailsPage : Page
     {
-        public TaskListPage()
+        public ViewTaskDetailsPage()
         {
             InitializeComponent();
         }
+        private Guid _taskGuid { get; set; }
 
-        public event EventHandler<Guid> TaskSelected;
+        public ViewTaskDetailsPage(Guid taskGuid) : this()
+        {
+            _taskGuid = taskGuid;
+        }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "VSTHRD100:Avoid async void methods", Justification = "Page class events can't be async Task")]
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            await ((TaskListPageViewModel)this.DataContext).OnPageLoadedAsync();
-        }
-
-        private void Border_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            TaskSelected?.Invoke(sender, ((TaskListDisplayItem)((Border)sender).DataContext).Id);
+            await ((ViewTaskDetailsViewModel)DataContext).LoadTaskAsync(_taskGuid);
         }
     }
 }

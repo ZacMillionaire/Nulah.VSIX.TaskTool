@@ -74,6 +74,9 @@
     <Compile Include="ToolWindows\TaskManager\Controls\Pages\TaskListPage.xaml.cs">
       <DependentUpon>TaskListPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ToolWindows\TaskManager\Controls\Pages\ViewTaskDetailsPage.xaml.cs">
+      <DependentUpon>ViewTaskDetailsPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ToolWindows\TaskManager\Controls\TaskListControl.xaml.cs">
       <DependentUpon>TaskListControl.xaml</DependentUpon>
     </Compile>
@@ -95,6 +98,7 @@
     <Compile Include="ToolWindows\TaskManager\ViewModels\DatabaseSelectViewModel.cs" />
     <Compile Include="ToolWindows\TaskManager\ViewModels\Pages\NewTaskPageViewModel.cs" />
     <Compile Include="ToolWindows\TaskManager\ViewModels\Pages\TaskListPageViewModel.cs" />
+    <Compile Include="ToolWindows\TaskManager\ViewModels\Pages\ViewTaskDetailsViewModel.cs" />
     <Compile Include="ToolWindows\TaskManager\ViewModels\TaskListViewModel.cs" />
     <Compile Include="ToolWindows\TaskManager\ViewModels\TaskManagerMainViewModel.cs" />
   </ItemGroup>
@@ -128,6 +132,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ToolWindows\TaskManager\Controls\Pages\TaskListPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ToolWindows\TaskManager\Controls\Pages\ViewTaskDetailsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

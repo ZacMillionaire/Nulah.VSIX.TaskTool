@@ -25,8 +25,12 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager.ViewModels.Pages
         public ICommand InProgressChangeCommand { get; private set; }
         public ICommand IsCompleteChangeCommand { get; private set; }
 
+        private TaskListManager _taskListManager;
+
         public TaskListPageViewModel()
         {
+            _taskListManager = GetDependency<TaskListManager>();
+
             InProgressChangeCommand = new RelayCommand(taskListDisplayItem => InProgressCheckedChanged(taskListDisplayItem as TaskListDisplayItem), x => true);
             IsCompleteChangeCommand = new RelayCommand(taskListDisplayItem => IsCompletedCheckedChanged(taskListDisplayItem as TaskListDisplayItem), x => true);
         }
@@ -72,20 +76,24 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager.ViewModels.Pages
         /// </summary>
         public async Task OnPageLoadedAsync()
         {
-            TaskListLoading = true;
-            TaskListReady = false;
-            // Run GetTaskList as a task to avoid delaying the extension from first rendering
-            await Task.Run(() =>
+            // Only refresh the list if the task database has been updated in some way
+            if (_taskListManager.ListChanged == true)
             {
-                GetTaskList();
-                TaskListLoading = false;
-                TaskListReady = true;
-            });
+                TaskListLoading = true;
+                TaskListReady = false;
+                // Run GetTaskList as a task to avoid delaying the extension from first rendering
+                await Task.Run(() =>
+                {
+                    GetTaskList();
+                    TaskListLoading = false;
+                    TaskListReady = true;
+                });
+            }
         }
 
         private void GetTaskList()
         {
-            var taskList = GetDependency<TaskListManager>().GetTasks()
+            var taskList = _taskListManager.GetTasks()
                 .Select(x => new TaskListDisplayItem
                 {
                     Id = x.Id,
@@ -101,14 +109,16 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager.ViewModels.Pages
 
         private void InProgressCheckedChanged(TaskListDisplayItem taskListDisplayItem)
         {
-            bool a = GetDependency<TaskListManager>().UpdateTaskProgressState(taskListDisplayItem.Id, taskListDisplayItem.InProgress);
+            // TODO: sync these methods to be the same functionality as ViewTaskDetailsPage
+            bool a = _taskListManager.UpdateTaskProgressState(taskListDisplayItem.Id, taskListDisplayItem.InProgress);
             // Updating task progress sets IsComplete to false, so reflect this on the model
             taskListDisplayItem.IsComplete = false;
         }
 
         private void IsCompletedCheckedChanged(TaskListDisplayItem taskListDisplayItem)
         {
-            bool a = GetDependency<TaskListManager>().UpdateTaskCompletedState(taskListDisplayItem.Id, taskListDisplayItem.IsComplete);
+            // TODO: sync these methods to be the same functionality as ViewTaskDetailsPage
+            bool a = _taskListManager.UpdateTaskCompletedState(taskListDisplayItem.Id, taskListDisplayItem.IsComplete);
             // Updating task completion sets InProgress to false, so reflect this on the model
             taskListDisplayItem.InProgress = false;
         }

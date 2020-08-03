@@ -14,6 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 using Nulah.VSIX.TaskTool.ToolWindows.TaskManager.Controls.Pages;
+using Nulah.VSIX.TaskTool.ToolWindows.TaskManager.ViewModels;
 
 namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager.Controls
 {
@@ -31,6 +32,7 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager.Controls
         public void Init()
         {
             BackToTaskListButton.IsEnabled = false;
+            ((TaskListViewModel)this.DataContext).RegisterUserControl(this);
 
             TaskPageFrame.ContentRendered += TaskPageFrame_ContentRendered;
         }
@@ -59,6 +61,11 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager.Controls
         private void BackToTaskListButton_Click(object sender, RoutedEventArgs e)
         {
             TaskPageFrame.GoBack();
+        }
+
+        internal void LoadSelectedTask(Guid taskGuid)
+        {
+            TaskPageFrame.Content = new ViewTaskDetailsPage(taskGuid);
         }
     }
 }

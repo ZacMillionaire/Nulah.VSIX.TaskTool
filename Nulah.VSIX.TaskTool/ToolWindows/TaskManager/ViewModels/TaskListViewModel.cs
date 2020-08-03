@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 
 using Nulah.VSIX.TaskTool.StandardLib.Models;
+using Nulah.VSIX.TaskTool.ToolWindows.TaskManager.Controls;
 using Nulah.VSIX.TaskTool.ToolWindows.TaskManager.Controls.Pages;
 using Nulah.VSIX.TaskTool.ToolWindows.TaskManager.ViewModels.Pages;
 
@@ -37,6 +38,13 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager.ViewModels
             }
         }
 
+        private TaskListControl _taskListUserControl;
+
+        internal void RegisterUserControl(TaskListControl taskListUserControl)
+        {
+            _taskListUserControl = taskListUserControl;
+        }
+
         private TaskListPageViewModel _vmDataContext => ((TaskListPageViewModel)TaskListPageContent.DataContext);
 
         public TaskListPage TaskListPageContent { get; private set; }
@@ -46,6 +54,7 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager.ViewModels
         public TaskListViewModel()
         {
             TaskListPageContent = new TaskListPage();
+            TaskListPageContent.TaskSelected += TaskSelectedInList;
             SortOptions = _vmDataContext.SortOptions;
             // Look at localising these default values and maybe swap the dictionary around to be <TaskListSort, string>?
             SelectedSortOption = "Created Descending"; // TODO: should come from a configuration/last used maybe? Should persist either way
@@ -63,6 +72,11 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager.ViewModels
                 return;
             }
             _vmDataContext.SortTaskList(newSortOrder);
+        }
+
+        private void TaskSelectedInList(object sender, Guid taskGuid)
+        {
+            _taskListUserControl.LoadSelectedTask(taskGuid);
         }
     }
 }
