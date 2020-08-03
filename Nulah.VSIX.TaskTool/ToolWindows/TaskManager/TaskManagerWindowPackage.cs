@@ -90,7 +90,7 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager
         {
             if (toolWindowType == typeof(TaskManagerWindow))
             {
-                return "TaskManagerWindow loading";
+                return "Nulah Task Window Loading loading";
             }
 
             return base.GetToolWindowTitle(toolWindowType, id);

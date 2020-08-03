@@ -33,6 +33,8 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager.Controls
         {
             BackToTaskListButton.IsEnabled = false;
             ((TaskListViewModel)this.DataContext).RegisterUserControl(this);
+            // Ensure that the sort order options combobox is correctly updated to match its contents
+            SortOrder.UpdateLayout();
 
             TaskPageFrame.ContentRendered += TaskPageFrame_ContentRendered;
         }
