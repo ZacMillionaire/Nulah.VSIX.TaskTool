@@ -60,6 +60,12 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>source.extension.vsixmanifest</DependentUpon>
     </Compile>
+    <Compile Include="StandardLib\Markdown\LineParser.cs" />
+    <Compile Include="StandardLib\Markdown\MarkdownToBlock.cs" />
+    <Compile Include="StandardLib\Markdown\Models\Blocks\ContentBlock.cs" />
+    <Compile Include="StandardLib\Markdown\Models\Blocks\ParagraphBlock.cs" />
+    <Compile Include="StandardLib\Markdown\Models\INulahMarkdownBlock.cs" />
+    <Compile Include="StandardLib\Markdown\Models\MarkerType.cs" />
     <Compile Include="StandardLib\Models\ReflectedTypeInfo.cs" />
     <Compile Include="StandardLib\Models\ReflectedValueInfo.cs" />
     <Compile Include="StandardLib\Models\RelayCommand.cs" />
@@ -76,6 +82,9 @@
     </Compile>
     <Compile Include="ToolWindows\TaskManager\Controls\Pages\ViewTaskDetailsPage.xaml.cs">
       <DependentUpon>ViewTaskDetailsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ToolWindows\TaskManager\Controls\TaskContentView.xaml.cs">
+      <DependentUpon>TaskContentView.xaml</DependentUpon>
     </Compile>
     <Compile Include="ToolWindows\TaskManager\Controls\TaskListControl.xaml.cs">
       <DependentUpon>TaskListControl.xaml</DependentUpon>
@@ -136,6 +145,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ToolWindows\TaskManager\Controls\Pages\ViewTaskDetailsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ToolWindows\TaskManager\Controls\TaskContentView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

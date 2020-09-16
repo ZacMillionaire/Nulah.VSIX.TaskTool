@@ -110,6 +110,7 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager.ViewModels.Pages
         private void InProgressCheckedChanged(TaskListDisplayItem taskListDisplayItem)
         {
             // TODO: sync these methods to be the same functionality as ViewTaskDetailsPage
+            // I think I meant re: loading progress which is missing here - both ways currently call the task list manager
             bool a = _taskListManager.UpdateTaskProgressState(taskListDisplayItem.Id, taskListDisplayItem.InProgress);
             // Updating task progress sets IsComplete to false, so reflect this on the model
             taskListDisplayItem.IsComplete = false;
@@ -118,6 +119,7 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager.ViewModels.Pages
         private void IsCompletedCheckedChanged(TaskListDisplayItem taskListDisplayItem)
         {
             // TODO: sync these methods to be the same functionality as ViewTaskDetailsPage
+            // I think I meant re: loading progress which is missing here - both ways currently call the task list manager
             bool a = _taskListManager.UpdateTaskCompletedState(taskListDisplayItem.Id, taskListDisplayItem.IsComplete);
             // Updating task completion sets InProgress to false, so reflect this on the model
             taskListDisplayItem.InProgress = false;
@@ -167,7 +169,29 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager.ViewModels.Pages
 
         public Guid Id { get; set; }
         public string Title { get; set; }
-        public string Content { get; set; }
+        private string _content;
+        public string Content
+        {
+            get
+            {
+                return _content;
+            }
+            set
+            {
+                if (string.IsNullOrWhiteSpace(value))
+                {
+                    _content = string.Empty;
+                }
+                else if (value.Length > 100)
+                {
+                    _content = value.Replace(Environment.NewLine, string.Empty).Substring(0, 100);
+                }
+                else
+                {
+                    _content = value.Replace(Environment.NewLine, string.Empty);
+                }
+            }
+        }
         public bool InProgress
         {
             get => _inProgress; set
