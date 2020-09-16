@@ -13,7 +13,7 @@ using Nulah.VSIX.TaskTool.ToolWindows.TaskManager.ViewModels.Pages;
 
 namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager.ViewModels
 {
-    public class TaskListViewModel : ViewModelBase
+    public class TaskListControlViewModel : ViewModelBase
     {
         public ICommand NewTaskCommand { get; private set; }
 
@@ -51,7 +51,7 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager.ViewModels
 
         private bool _viewModelReady = false;
 
-        public TaskListViewModel()
+        public TaskListControlViewModel()
         {
             TaskListPageContent = new TaskListPage();
             TaskListPageContent.TaskSelected += TaskSelectedInList;

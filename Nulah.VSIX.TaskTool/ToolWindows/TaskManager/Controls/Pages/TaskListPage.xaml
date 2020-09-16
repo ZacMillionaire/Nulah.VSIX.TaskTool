@@ -23,7 +23,7 @@
             <StackPanel.Style>
                 <Style TargetType="StackPanel">
                     <Style.Setters>
-                        <Setter Property="Visibility" Value="Collapsed"/>
+                        <!--<Setter Property="Visibility" Value="Collapsed"/>-->
                     </Style.Setters>
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding TaskListLoading}" Value="False">
@@ -33,21 +33,21 @@
                 </Style>
             </StackPanel.Style>
             <!--<TextBlock>
-            <TextBlock.Style>
-                <Style TargetType="TextBlock">
-                    <Style.Setters>
-                        <Setter Property="Visibility" Value="Visible"/>
-                        <Setter Property="HorizontalAlignment" Value="Center" />
-                    </Style.Setters>
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding TaskListLoading}" Value="False">
-                            <Setter Property="Visibility" Value="Collapsed"/>
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </TextBlock.Style>
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Style.Setters>
+                            <Setter Property="Visibility" Value="Visible"/>
+                            <Setter Property="HorizontalAlignment" Value="Center" />
+                        </Style.Setters>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding TaskListLoading}" Value="False">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
             Loading Tasks...
-        </TextBlock>-->
+            </TextBlock>-->
             <ItemsControl ItemsSource="{Binding Tasks}" IsEnabled="{Binding TaskListReady}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>

@@ -108,7 +108,7 @@
     <Compile Include="ToolWindows\TaskManager\ViewModels\Pages\NewTaskPageViewModel.cs" />
     <Compile Include="ToolWindows\TaskManager\ViewModels\Pages\TaskListPageViewModel.cs" />
     <Compile Include="ToolWindows\TaskManager\ViewModels\Pages\ViewTaskDetailsViewModel.cs" />
-    <Compile Include="ToolWindows\TaskManager\ViewModels\TaskListViewModel.cs" />
+    <Compile Include="ToolWindows\TaskManager\ViewModels\TaskListControlViewModel.cs" />
     <Compile Include="ToolWindows\TaskManager\ViewModels\TaskManagerMainViewModel.cs" />
   </ItemGroup>
   <ItemGroup>

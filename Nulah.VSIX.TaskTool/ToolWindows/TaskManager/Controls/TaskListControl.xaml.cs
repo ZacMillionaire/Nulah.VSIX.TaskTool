@@ -23,6 +23,8 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager.Controls
     /// </summary>
     public partial class TaskListControl : UserControl
     {
+        // Called on first load of the task list control, either from visual studio starting up (if the tool was previously pinned open)
+        // or when first opened/expanded from a dock
         public TaskListControl()
         {
             InitializeComponent();
@@ -32,7 +34,7 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager.Controls
         public void Init()
         {
             BackToTaskListButton.IsEnabled = false;
-            ((TaskListViewModel)this.DataContext).RegisterUserControl(this);
+            ((TaskListControlViewModel)this.DataContext).RegisterUserControl(this);
             // Ensure that the sort order options combobox is correctly updated to match its contents
             SortOrder.UpdateLayout();
 
@@ -41,15 +43,21 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager.Controls
 
         private void TaskPageFrame_ContentRendered(object sender, EventArgs e)
         {
+            // If we're viewing a task/creating a task, being able to change the task source, source ordering
+            // and the ability to create a new task should be disabled
             if (TaskPageFrame.CanGoBack == true)
             {
                 NewTaskButton.IsEnabled = false;
+                TaskListSection.IsEnabled = false;
+                TaskSortSection.IsEnabled = false;
 
                 BackToTaskListButton.IsEnabled = true;
             }
             else
             {
                 NewTaskButton.IsEnabled = true;
+                TaskListSection.IsEnabled = true;
+                TaskSortSection.IsEnabled = true;
 
                 BackToTaskListButton.IsEnabled = false;
             }
