@@ -8,11 +8,11 @@ namespace Nulah.VSIX.TaskTool
     internal sealed partial class Vsix
     {
         public const string Id = "Nulah.VSIX.TaskTool.210bf379-e573-4d9f-b6cb-2358d4172f12";
-        public const string Name = "Nulah.VSIX.TaskTool";
-        public const string Description = @"Empty VSIX Project.";
+        public const string Name = "Nulah.TaskTool";
+        public const string Description = @"A simple task list extension.";
         public const string Language = "en-US";
-        public const string Version = "1.0";
-        public const string Author = "scott s";
-        public const string Tags = "";
+        public const string Version = "0.1";
+        public const string Author = "Scott Schultz";
+        public const string Tags = "Task list, Todo List";
     }
 }
