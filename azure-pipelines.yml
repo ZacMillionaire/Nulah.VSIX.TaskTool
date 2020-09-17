@@ -20,9 +20,13 @@ steps:
   inputs:
     secureFile: 'Key.snk'
 
-- script: |
-    echo Strong name key: $(strongNameKey.secureFilePath)
-    
+- task: CopyFiles@2
+  inputs:
+    SourceFolder: '$(strongNameKey.secureFilePath)'
+    Contents: '*.snk'
+    TargetFolder: '$(Build.Repository.LocalPath)'
+    OverWrite: true
+
 - task: NuGetToolInstaller@1
 
 - task: NuGetCommand@2
