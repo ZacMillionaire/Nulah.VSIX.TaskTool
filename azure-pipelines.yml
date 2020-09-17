@@ -54,10 +54,10 @@ steps:
   inputs:
     targetType: 'inline'
     script: |
-      "Binaries" $(Build.BinariesDirectory)
-      ls $(Build.BinariesDirectory)
-      "Artifact staging" $(Build.ArtifactStagingDirectory)
-      ls $(Build.ArtifactStagingDirectory)
+      "Binaries $(Build.BinariesDirectory)"
+      ls "$(Build.BinariesDirectory)"
+      "Artifact staging $(Build.ArtifactStagingDirectory)"
+      ls "$(Build.ArtifactStagingDirectory)"
       
 - task: ArchiveFiles@2
   inputs:
