@@ -54,7 +54,7 @@ steps:
   inputs:
     targetType: 'inline'
     script: |
-      ls $(Build.BinariesDirectory)
+      $(Build.BinariesDirectory)
       
 - task: ArchiveFiles@2
   inputs:
