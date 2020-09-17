@@ -1,0 +1,75 @@
+trigger:
+- releases/*
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  solution: '**/*.sln'
+  buildPlatform: 'Any CPU'
+  buildConfiguration: 'Release'
+
+steps:
+- task: DownloadSecureFile@1
+  name: strongNameKey
+  inputs:
+    secureFile: 'Key.snk'
+
+- task: DownloadSecureFile@1
+  name: codeSigningKey
+  inputs:
+    secureFile: 'code_signing.pkf'
+- task: CopyFiles@2
+  inputs:
+    SourceFolder: '$(Agent.TempDirectory)'
+    Contents: '**'
+    TargetFolder: '$(Build.Repository.LocalPath)\$(ProjectName)'
+    OverWrite: true
+
+- task: NuGetToolInstaller@1
+
+- task: NuGetCommand@2
+  inputs:
+    restoreSolution: '$(solution)'
+
+- task: VSBuild@1
+  inputs:
+    solution: '$(solution)'
+    msbuildArgs: '/p:outdir=$(Build.BinariesDirectory)'
+    platform: '$(buildPlatform)'
+    configuration: '$(buildConfiguration)'
+
+
+# Digitally sign the extension with an internal cert - currently self signed and will result in an invalid signature
+# when the extension is installed.
+# We are accepting this for now until a valid code signing cert is obtained
+- task: PowerShell@2
+  inputs:
+    targetType: 'inline'
+    script: |
+      dotnet tool install -g OpenVsixSignTool
+      OpenVsixSignTool sign -c $(Build.Repository.LocalPath)\$(ProjectName)\code_signing.pkf -p $(CodeSigningCertPassword) --timestamp http://timestamp.digicert.com -ta sha256 -fd sha256 $(Build.BinariesDirectory)\$(ProjectName).vsix
+
+- task: CopyFiles@2
+  inputs:
+    SourceFolder: '$(Build.BinariesDirectory)'
+    Contents: '$(ProjectName).vsix'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)'
+      
+- task: ArchiveFiles@2
+  inputs:
+    rootFolderOrFile: '$(Build.ArtifactStagingDirectory)'
+    includeRootFolder: true
+    archiveType: '7z'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.SourceBranch)_$(Build.BuildId).zip'
+    replaceExistingArchive: true
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)/$(Build.SourceBranch)_$(Build.BuildId).zip'
+    ArtifactName: 'drop'
+    publishLocation: 'Container'
+# task: VSTest@2
+# inputs:
+#    platform: '$(buildPlatform)'
+#    configuration: '$(buildConfiguration)'
