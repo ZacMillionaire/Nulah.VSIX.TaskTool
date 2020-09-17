@@ -40,7 +40,7 @@ steps:
 - task: VSBuild@1
   inputs:
     solution: '$(solution)'
-    msbuildArgs: '/p:outdir=$(Build.ArtifactStagingDirectory)'
+    msbuildArgs: '/p:outdir=$(Build.BinariesDirectory)'
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
 
@@ -51,20 +51,25 @@ steps:
     targetType: 'inline'
     script: |
       dotnet tool install -g OpenVsixSignTool
-           
-# OpenVsixSignTool sign -c $(Build.Repository.LocalPath)\$(ProjectName)\code_signing.pkf -p $(CodeSigningCertPassword) --timestamp http://timestamp.digicert.com -ta sha256 -fd sha256 $(Build.BinariesDirectory)\$(ProjectName).vsix
-- task: PowerShell@2
+      OpenVsixSignTool sign -c $(Build.Repository.LocalPath)\$(ProjectName)\code_signing.pkf -p $(CodeSigningCertPassword) --timestamp http://timestamp.digicert.com -ta sha256 -fd sha256 $(Build.BinariesDirectory)\$(ProjectName).vsix
+
+- task: CopyFiles@2
   inputs:
-    targetType: 'inline'
-    script: |
-      "Binaries $(Build.BinariesDirectory)"
-      ls "$(Build.BinariesDirectory)"
-      "Artifact staging $(Build.ArtifactStagingDirectory)"
-      ls "$(Build.ArtifactStagingDirectory)"
+    SourceFolder: '$(Build.BinariesDirectory)'
+    Contents: '$(ProjectName).vsix'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)'
+#- task: PowerShell@2
+#  inputs:
+#    targetType: 'inline'
+#    script: |
+#      "Binaries $(Build.BinariesDirectory)"
+#      ls "$(Build.BinariesDirectory)"
+#      "Artifact staging $(Build.ArtifactStagingDirectory)"
+#      ls "$(Build.ArtifactStagingDirectory)"
       
 - task: ArchiveFiles@2
   inputs:
-    rootFolderOrFile: '$(Build.BinariesDirectory)'
+    rootFolderOrFile: '$(Build.ArtifactStagingDirectory)'
     includeRootFolder: true
     archiveType: '7z'
     archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
@@ -72,7 +77,7 @@ steps:
 
 - task: PublishBuildArtifacts@1
   inputs:
-    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
     ArtifactName: 'drop'
     publishLocation: 'Container'
 # task: VSTest@2
