@@ -51,7 +51,7 @@ steps:
 - task: CmdLine@2
   inputs:
     script: |
-      OpenVsixSignTool sign -c $(Build.Repository.LocalPath)\$(ProjectName)\code_signing.pkf -p $env:CODESIGNINGCERTPASSWORD --timestamp http://timestamp.digicert.com -ta sha256 -fd sha256 $(ProjectName).vsix
+      OpenVsixSignTool sign -c $(Build.Repository.LocalPath)\$(ProjectName)\code_signing.pkf -p $(CodeSigningCertPassword) --timestamp http://timestamp.digicert.com -ta sha256 -fd sha256 $(ProjectName).vsix
       
 - task: ArchiveFiles@2
   inputs:
