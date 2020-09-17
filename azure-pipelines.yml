@@ -39,15 +39,11 @@ steps:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
 
-- task: DotNetCoreCLI@2
+- task: CmdLine@2
   inputs:
-    command: 'custom'
-    custom: 'tool install -g OpenVsixSignTool'
-
-- task: DotNetCoreCLI@2
-  inputs:
-    command: 'custom'
-    custom: 'OpenVsixSignTool sign --sha1 7213125958254779abbaa5033a12fecdf2c7cdc8 --timestamp http://timestamp.digicert.com -ta sha256 -fd sha256 $(ProjectName).vsix'
+    script: |
+      dotnet tool install -g OpenVsixSignTool
+      dotnet OpenVsixSignTool sign --sha1 7213125958254779abbaa5033a12fecdf2c7cdc8 --timestamp http://timestamp.digicert.com -ta sha256 -fd sha256 $(ProjectName).vsix
 
 - task: ArchiveFiles@2
   inputs:
