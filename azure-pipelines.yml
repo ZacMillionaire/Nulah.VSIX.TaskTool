@@ -25,6 +25,9 @@ steps:
   inputs:
     secureFile: 'Key.snk'
 
+- script: |
+    ls
+
 - task: VSBuild@1
   inputs:
     solution: '$(solution)'
