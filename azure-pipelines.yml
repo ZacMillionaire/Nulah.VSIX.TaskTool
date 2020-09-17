@@ -22,7 +22,7 @@ steps:
 
 - task: CopyFiles@2
   inputs:
-    SourceFolder: '$(strongNameKey.secureFilePath)'
+    SourceFolder: '$(Agent.TempDirectory)'
     Contents: '*.snk'
     TargetFolder: '$(Build.Repository.LocalPath)'
     OverWrite: true
