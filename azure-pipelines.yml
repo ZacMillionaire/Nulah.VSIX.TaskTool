@@ -43,8 +43,12 @@ steps:
   inputs:
     script: |
       dotnet tool install -g OpenVsixSignTool
+      
+- task: CmdLine@2
+  inputs:
+    script: |
       dotnet OpenVsixSignTool sign --sha1 7213125958254779abbaa5033a12fecdf2c7cdc8 --timestamp http://timestamp.digicert.com -ta sha256 -fd sha256 $(ProjectName).vsix
-
+      
 - task: ArchiveFiles@2
   inputs:
     rootFolderOrFile: '$(Build.BinariesDirectory)'
