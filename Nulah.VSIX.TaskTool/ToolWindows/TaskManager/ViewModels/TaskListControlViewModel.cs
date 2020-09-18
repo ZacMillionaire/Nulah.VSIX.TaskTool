@@ -9,6 +9,7 @@ using System.Windows.Input;
 using Nulah.VSIX.TaskTool.StandardLib.Models;
 using Nulah.VSIX.TaskTool.ToolWindows.TaskManager.Controls;
 using Nulah.VSIX.TaskTool.ToolWindows.TaskManager.Controls.Pages;
+using Nulah.VSIX.TaskTool.ToolWindows.TaskManager.Models;
 using Nulah.VSIX.TaskTool.ToolWindows.TaskManager.ViewModels.Pages;
 
 namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager.ViewModels
@@ -47,20 +48,51 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager.ViewModels
 
         private TaskListPageViewModel _vmDataContext => ((TaskListPageViewModel)TaskListPageContent.DataContext);
 
+        private DatabaseSelectViewModel _taskSourceViewModel;
+
+        public DatabaseSelectViewModel TaskSourceViewModel
+        {
+            get { return _taskSourceViewModel; }
+            set { _taskSourceViewModel = value; }
+        }
+
+        private readonly TaskListManager _taskListManager;
+
+
         public TaskListPage TaskListPageContent { get; private set; }
 
         private bool _viewModelReady = false;
 
         public TaskListControlViewModel()
         {
+            _taskListManager = GetDependency<TaskListManager>();
+
             TaskListPageContent = new TaskListPage();
             TaskListPageContent.TaskSelected += TaskSelectedInList;
             SortOptions = _vmDataContext.SortOptions;
+
             // Look at localising these default values and maybe swap the dictionary around to be <TaskListSort, string>?
             SelectedSortOption = "Created Descending"; // TODO: should come from a configuration/last used maybe? Should persist either way
             _vmDataContext.SetInitialSortOrder(SortOptions["Created Descending"]); // TODO: should come from configuration/last used mode maybe? Should persist either way
+
+
+            TaskSourceViewModel = new DatabaseSelectViewModel(_taskListManager.AvailableTaskLists, _taskListManager.AvailableTaskLists.First());
+            TaskSourceViewModel.SelectedTaskListChange += TaskSourceViewModel_SelectedTaskListChange;
+
+
             // Mark that the viewmodel has been properly intialised
             _viewModelReady = true;
+        }
+
+        private void TaskSourceViewModel_SelectedTaskListChange(object sender, DatabaseSource targetTaskSource)
+        {
+            // Don't act on task list changes until the viewmodel is ready
+            if (_viewModelReady == false)
+            {
+                return;
+            }
+            _taskListManager.SwitchDatabase(targetTaskSource);
+            _vmDataContext.UpdateTaskList();
         }
 
         private void SelectedSortChanged(TaskListSort newSortOrder)

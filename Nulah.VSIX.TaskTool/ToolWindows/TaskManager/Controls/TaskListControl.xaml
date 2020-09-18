@@ -27,7 +27,7 @@
             </ToolBar>
             <ToolBar x:Name="TaskListSection" VerticalAlignment="Center" >
                 <TextBlock Margin="5,0" VerticalAlignment="Center">Task List</TextBlock>
-                <NulahControl:DatabaseSelectControl/>
+                <NulahControl:DatabaseSelectControl DataContext="{Binding TaskSourceViewModel}"/>
             </ToolBar>
             <ToolBar x:Name="TaskSortSection" VerticalAlignment="Center">
                 <ComboBox x:Name="SortOrder" ItemsSource="{Binding SortOptions}" SelectedValue="{Binding SelectedSortOption}" SelectedValuePath="Key">
@@ -41,7 +41,7 @@
                 </ComboBox>
             </ToolBar>
         </ToolBarTray>
-            <Frame Grid.Row="1" x:Name="TaskPageFrame" NavigationUIVisibility="Hidden" 
+        <Frame Grid.Row="1" x:Name="TaskPageFrame" NavigationUIVisibility="Hidden" 
                    d:DataContext="{d:DesignInstance Type=Pages:TaskListPage, IsDesignTimeCreatable=True}"
                    Content="{Binding TaskListPageContent}"
                    ScrollViewer.VerticalScrollBarVisibility="Auto"

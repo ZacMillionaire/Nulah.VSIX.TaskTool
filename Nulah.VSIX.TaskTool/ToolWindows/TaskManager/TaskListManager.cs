@@ -15,14 +15,18 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager
     {
         private readonly SqliteProvider _sqliteProvider;
         private const string GLOBAL_DB_DATASOURCE_NAME = "GLOBAL";
+        private const string ALL_DB_DATASOURCE_NAME = "GLOBAL_AND_SOLUTION";
         private const string APP_SETTINGS_DB_DATASOURCE_NAME = "APPSETTINGS";
 
-        private List<Task> _currentTaskList { get; set; }
+        public List<DatabaseSource> AvailableTaskLists { get; private set; }
+        private Dictionary<string, DatabaseSource> _taskDatabases { get; set; }
+
+        private Dictionary<string, List<Task>> _loadedTasks { get; set; }
         public bool ListChanged { get; private set; }
 
-        private string _currentTaskDatabase;
+        private DatabaseSource _currentTaskDatabase;
 
-        public bool IsGlobalDatabaseInUse;
+        public bool IsAllTaskSourcesInUse;
 
         /// <summary>
         /// %APPDATA%/Nulah
@@ -38,8 +42,31 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager
             CreateAppDataFolder();
             CreateAppDatabases();
 
+            _taskDatabases = new Dictionary<string, DatabaseSource>
+            {
+                {
+                    ALL_DB_DATASOURCE_NAME,
+                    new DatabaseSource{
+                        DisplayName = "<all lists>",
+                        DatabaseName = ALL_DB_DATASOURCE_NAME,
+                        Location = null
+                    }
+                },
+                {
+                    GLOBAL_DB_DATASOURCE_NAME,
+                    new DatabaseSource{
+                        DisplayName = "Global",
+                        DatabaseName = GLOBAL_DB_DATASOURCE_NAME,
+                        Location = Path.Combine(_applicationDataLocation, "Nulah.TaskList.sqlitedb")
+                    }
+                },
+            };
+
+            // Get databases for loaded solution and projects - if a solution/project is open
+            AvailableTaskLists = _taskDatabases.Values.ToList();
+
             // Default to using Global database for now
-            SwitchDatabase(GLOBAL_DB_DATASOURCE_NAME);
+            SwitchDatabase(_taskDatabases[ALL_DB_DATASOURCE_NAME]);
         }
 
         /// <summary>
@@ -106,14 +133,21 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager
         /// Change the active database for tasks to the new database, and loads all tasks stored
         /// </summary>
         /// <param name="newDatabase"></param>
-        public void SwitchDatabase(string newDatabase)
+        public void SwitchDatabase(DatabaseSource newDatabase)
         {
-            if (_sqliteProvider.DataSourceExists(newDatabase))
+            // If the database name is the one used to indicate "all for solution"
+            if (newDatabase.DatabaseName == ALL_DB_DATASOURCE_NAME)
             {
-                _currentTaskDatabase = newDatabase;
-                IsGlobalDatabaseInUse = _currentTaskDatabase == GLOBAL_DB_DATASOURCE_NAME;
+                IsAllTaskSourcesInUse = true;
+                // load all tasks from all datasources
 
-                LoadTasksForCurrentDatabase(newDatabase);
+            }
+            // Otherwise check if a database exists at the given location
+            else if (_sqliteProvider.DataSourceExists(newDatabase.DatabaseName))
+            {
+                IsAllTaskSourcesInUse = false;
+                _currentTaskDatabase = newDatabase;
+                LoadTasksForCurrentDatabase(newDatabase.DatabaseName);
             }
             else
             {
@@ -123,29 +157,46 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager
 
         public string GetCurrentDatabase()
         {
+            /*
             if (IsGlobalDatabaseInUse == true)
             {
                 return "Global";
             }
-
-            return $"Solution - {_currentTaskDatabase}";
-        }
-
-        private void LoadTasksForCurrentDatabase(string taskDatabase)
-        {
-            // Horribly track if the task list is dirty and that the UI should reload to get latest changes
-            ListChanged = true;
-            _currentTaskList = _sqliteProvider.Query<Task>(taskDatabase, $"SELECT * FROM [{nameof(Task)}] ORDER BY [{nameof(Task.CreatedUTC)}] DESC");
+            */
+            return $"Solution - {_currentTaskDatabase.DisplayName}";
         }
 
         /// <summary>
-        /// Returns all tasks for the currently selected database
+        /// Loads all tasks from the sqlite database by its given source key, ordered by task creation descending
+        /// </summary>
+        /// <param name="databaseSourceKey"></param>
+        private void LoadTasksForCurrentDatabase(string databaseSourceKey)
+        {
+            // Horribly track if the task list is dirty and that the UI should reload to get latest changes
+            ListChanged = true;
+            if (IsAllTaskSourcesInUse == false)
+            {
+                _loadedTasks = new Dictionary<string, List<Task>>{
+                    {
+                        _currentTaskDatabase.DisplayName,
+                        _sqliteProvider.Query<Task>(databaseSourceKey, $"SELECT * FROM [{nameof(Task)}] ORDER BY [{nameof(Task.CreatedUTC)}] DESC")
+                    }
+                };
+            }
+            else
+            {
+                throw new Exception("all task list not implemented");
+            }
+        }
+
+        /// <summary>
+        /// Returns all tasks for the currently selected database, and clears the ListChanged flag
         /// </summary>
         /// <returns></returns>
-        public List<Task> GetTasks()
+        public Dictionary<string, List<Task>> GetTasks()
         {
             ListChanged = false;
-            return _currentTaskList;
+            return _loadedTasks;
         }
 
         /// <summary>
@@ -155,7 +206,7 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager
         /// <returns></returns>
         public Task GetTask(Guid taskId)
         {
-            var taskById = _sqliteProvider.Query<Task>(_currentTaskDatabase, $"SELECT * FROM [{nameof(Task)}] WHERE [{nameof(Task.Id)}] = @TaskGuid",
+            var taskById = _sqliteProvider.Query<Task>(_currentTaskDatabase.DatabaseName, $"SELECT * FROM [{nameof(Task)}] WHERE [{nameof(Task.Id)}] = @TaskGuid",
                 new
                 {
                     TaskGuid = taskId
@@ -167,7 +218,7 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager
         public bool CreateTask(string title, string content)
         {
             var taskProps = NulahStandardLib.GetPropertiesForType<Task>();
-            var insert = _sqliteProvider.Insert<Task>(_currentTaskDatabase,
+            var insert = _sqliteProvider.Insert<Task>(_currentTaskDatabase.DatabaseName,
                 $"INSERT INTO [{nameof(Task)}] ({string.Join(", ", taskProps.Select(x => $"[{ x.Name}]"))}) VALUES ({string.Join(",", taskProps.Select(x => $"@{x.Name}"))})",
                 new Task
                 {
@@ -177,7 +228,7 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager
                     Id = Guid.NewGuid()
                 });
 
-            LoadTasksForCurrentDatabase(_currentTaskDatabase);
+            LoadTasksForCurrentDatabase(_currentTaskDatabase.DatabaseName);
 
             return insert;
         }
@@ -190,7 +241,7 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager
         /// <returns></returns>
         public bool UpdateTaskProgressState(Guid taskId, bool progressState)
         {
-            var update = _sqliteProvider.Update<Task>(_currentTaskDatabase,
+            var update = _sqliteProvider.Update<Task>(_currentTaskDatabase.DatabaseName,
                 $"UPDATE [{nameof(Task)}] SET [{nameof(Task.InProgress)}] = @{nameof(Task.InProgress)}" +
                 $", [{nameof(Task.UpdatedUTC)}] = @{nameof(Task.UpdatedUTC)}" +
                 $", [{nameof(Task.IsComplete)}] = @{nameof(Task.IsComplete)}" +
@@ -202,7 +253,7 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager
                     IsComplete = false,
                     UpdatedUTC = NulahStandardLib.DateTimeNow()
                 });
-            LoadTasksForCurrentDatabase(_currentTaskDatabase);
+            LoadTasksForCurrentDatabase(_currentTaskDatabase.DatabaseName);
             return update;
         }
 
@@ -215,7 +266,7 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager
         public bool UpdateTaskCompletedState(Guid taskId, bool completedState)
         {
             var taskProps = NulahStandardLib.GetPropertiesForType<Task>();
-            var update = _sqliteProvider.Update<Task>(_currentTaskDatabase,
+            var update = _sqliteProvider.Update<Task>(_currentTaskDatabase.DatabaseName,
                 $"UPDATE [{nameof(Task)}] SET [{nameof(Task.IsComplete)}] = @{nameof(Task.IsComplete)}" +
                 $", [{nameof(Task.UpdatedUTC)}] = @{nameof(Task.UpdatedUTC)}" +
                 $", [{nameof(Task.InProgress)}] = @{nameof(Task.InProgress)}" +
@@ -227,7 +278,7 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager
                     InProgress = false,
                     UpdatedUTC = NulahStandardLib.DateTimeNow()
                 });
-            LoadTasksForCurrentDatabase(_currentTaskDatabase);
+            LoadTasksForCurrentDatabase(_currentTaskDatabase.DatabaseName);
             return update;
         }
 

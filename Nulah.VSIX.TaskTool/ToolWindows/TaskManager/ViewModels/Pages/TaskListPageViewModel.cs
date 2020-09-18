@@ -14,9 +14,9 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager.ViewModels.Pages
     public class TaskListPageViewModel : ViewModelBase
     {
 
-        private ObservableCollection<TaskListDisplayItem> _taskListDisplayItems;
+        private Dictionary<string, ObservableCollection<TaskListDisplayItem>> _taskListDisplayItems;
 
-        public ObservableCollection<TaskListDisplayItem> Tasks
+        public Dictionary<string, ObservableCollection<TaskListDisplayItem>> Tasks
         {
             get { return _taskListDisplayItems; }
             set { _taskListDisplayItems = value; OnPropertyChanged(nameof(Tasks)); }
@@ -76,35 +76,52 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager.ViewModels.Pages
         /// </summary>
         public async Task OnPageLoadedAsync()
         {
+            await Task.Run(() =>
+            {
+                UpdateTaskList();
+            });
+        }
+
+        /// <summary>
+        /// Refreshes the task list, doing nothing if the list is not dirty
+        /// </summary>
+        /// <returns></returns>
+        public void UpdateTaskList()
+        {
             // Only refresh the list if the task database has been updated in some way
             if (_taskListManager.ListChanged == true)
             {
                 TaskListLoading = true;
                 TaskListReady = false;
                 // Run GetTaskList as a task to avoid delaying the extension from first rendering
-                await Task.Run(() =>
-                {
-                    GetTaskList();
-                    TaskListLoading = false;
-                    TaskListReady = true;
-                });
+
+                RefreshTaskList();
+                TaskListLoading = false;
+                TaskListReady = true;
             }
         }
 
-        private void GetTaskList()
+        /// <summary>
+        /// Updates the task list to reflect the new datasource
+        /// </summary>
+        private void RefreshTaskList()
         {
             var taskList = _taskListManager.GetTasks()
-                .Select(x => new TaskListDisplayItem
-                {
-                    Id = x.Id,
-                    Content = x.Content,
-                    Title = x.Title,
-                    InProgress = x.InProgress,
-                    IsComplete = x.IsComplete,
-                    CreatedUTC = x.CreatedUTC,
-                    UpdatedUTC = x.UpdatedUTC
-                });
-            Tasks = new ObservableCollection<TaskListDisplayItem>(SortTasks(taskList, _currentSortOrder));
+                .ToDictionary(
+                    x => x.Key,
+                    v => new ObservableCollection<TaskListDisplayItem>(SortTasks(v.Value.Select(x => new TaskListDisplayItem
+                    {
+                        Id = x.Id,
+                        Content = x.Content,
+                        Title = x.Title,
+                        InProgress = x.InProgress,
+                        IsComplete = x.IsComplete,
+                        CreatedUTC = x.CreatedUTC,
+                        UpdatedUTC = x.UpdatedUTC
+                    }), _currentSortOrder))
+                );
+
+            Tasks = taskList;
         }
 
         private void InProgressCheckedChanged(TaskListDisplayItem taskListDisplayItem)
@@ -125,6 +142,10 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager.ViewModels.Pages
             taskListDisplayItem.InProgress = false;
         }
 
+        /// <summary>
+        /// Sorts the task order
+        /// </summary>
+        /// <param name="newSortOrder"></param>
         public void SortTaskList(TaskListSort newSortOrder)
         {
             // Update the current sort order as the user may change sort mode as its being loaded
@@ -134,7 +155,17 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager.ViewModels.Pages
                 return;
             }
 
-            Tasks = new ObservableCollection<TaskListDisplayItem>(SortTasks(_taskListDisplayItems, newSortOrder));
+
+            // Create a new copy of the current Task list so we can modify the collection
+            var sortedTaskList = new Dictionary<string, ObservableCollection<TaskListDisplayItem>>(Tasks);
+
+            // Sort all tasks in all groups
+            foreach (var taskGroup in Tasks.Keys)
+            {
+                sortedTaskList[taskGroup] = new ObservableCollection<TaskListDisplayItem>(SortTasks(sortedTaskList[taskGroup], newSortOrder));
+            }
+
+            Tasks = sortedTaskList;
         }
 
         private IEnumerable<TaskListDisplayItem> SortTasks(IEnumerable<TaskListDisplayItem> taskList, TaskListSort sortMode)

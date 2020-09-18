@@ -92,6 +92,7 @@
     </Compile>
     <Compile Include="ToolWindows\TaskManager\Models\ApplicationSetting.cs" />
     <Compile Include="ToolWindows\TaskManager\Models\Database.cs" />
+    <Compile Include="ToolWindows\TaskManager\Models\DatabaseSource.cs" />
     <Compile Include="ToolWindows\TaskManager\Models\Tasks\Task.cs" />
     <Compile Include="ToolWindows\TaskManager\TaskListManager.cs" />
     <Compile Include="ToolWindows\TaskManager\TaskManagerWindow.cs" />

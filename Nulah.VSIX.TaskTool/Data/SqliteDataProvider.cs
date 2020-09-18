@@ -15,6 +15,10 @@ namespace Nulah.VSIX.TaskTool.Data
 {
     public class SqliteProvider
     {
+        /// <summary>
+        /// A mapping of databaseName,databaseConnectionStrings
+        /// <para>This provides the means to store multiple databases and allow mutliple databases to be used once registered</para>
+        /// </summary>
         private Dictionary<string, string> _dataSourceConnectionStrings;
 
         private Dictionary<Type, string> _sqliteTypes = new Dictionary<Type, string>
@@ -49,12 +53,13 @@ namespace Nulah.VSIX.TaskTool.Data
         {
             _dataSourceConnectionStrings = new Dictionary<string, string>();
         }
+
         /// <summary>
         /// If the datasource does not already exist, an empty database will be created and will return true.
         /// <para>A return of false means the database already existed and was not created</para>
         /// </summary>
-        /// <param name="sourceName"></param>
-        /// <param name="dataSource"></param>
+        /// <param name="sourceName">Used to identify the database connection string by name</param>
+        /// <param name="dataSource">Location for the sqlite database to be stored</param>
         /// <returns></returns>
         public bool CreateDataSource(string sourceName, string dataSource)
         {
@@ -80,16 +85,32 @@ namespace Nulah.VSIX.TaskTool.Data
             return createdNewDatabase;
         }
 
+        /// <summary>
+        /// Checks for the existance of a database connection string, based on the name of the database given
+        /// </summary>
+        /// <param name="sourceName"></param>
+        /// <returns></returns>
         public bool DataSourceExists(string sourceName)
         {
             return _dataSourceConnectionStrings.ContainsKey(sourceName);
         }
 
+        /// <summary>
+        /// Returns the connection for a given database name
+        /// </summary>
+        /// <param name="sourceName"></param>
+        /// <returns></returns>
         private SQLiteConnection GetConnection(string sourceName)
         {
             return new SQLiteConnection(_dataSourceConnectionStrings[sourceName]);
         }
 
+        /// <summary>
+        /// Creates a table of given type <typeparamref name="T"/>, for the given datasource name
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="dataSource"></param>
+        /// <returns></returns>
         public bool CreateTable<T>(string dataSource)
         {
             var typeDetails = NulahStandardLib.GetPropertiesForType<T>();
@@ -110,12 +131,23 @@ namespace Nulah.VSIX.TaskTool.Data
             return false;
         }
 
+        /// <summary>
+        /// Returns true if a sqlite file exists at the given location
+        /// </summary>
+        /// <param name="sqliteFileLocation"></param>
+        /// <returns></returns>
         private bool SqliteFileExists(string sqliteFileLocation)
         {
             var fileInfo = new FileInfo(sqliteFileLocation);
+            // TODO: actually check that the file is an .sqlite file
             return fileInfo.Exists;
         }
 
+        /// <summary>
+        /// Creates a sqlite file at the given location
+        /// </summary>
+        /// <param name="dbLocation"></param>
+        /// <returns></returns>
         private string CreateSqliteFile(string dbLocation)
         {
             var di = new DirectoryInfo(dbLocation);
@@ -127,6 +159,12 @@ namespace Nulah.VSIX.TaskTool.Data
             }
         }
 
+        /// <summary>
+        /// Adds a parameter to the given parameter collection, serialising to the types respective DB type, performing serialisation as needed
+        /// </summary>
+        /// <param name="paramName"></param>
+        /// <param name="reflectedValueInfo"></param>
+        /// <param name="queryParameters"></param>
         private void AddValueToQueryParameters(string paramName, ReflectedValueInfo reflectedValueInfo, SQLiteParameterCollection queryParameters)
         {
             if (reflectedValueInfo.IsNull == true)
@@ -194,6 +232,14 @@ namespace Nulah.VSIX.TaskTool.Data
             return decimalValue.ToString("0.############################");
         }
 
+        /// <summary>
+        /// Deserialises a value retrieved from an sqlite value back to its C# type
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="destination"></param>
+        /// <param name="valueName"></param>
+        /// <param name="objectValue"></param>
+        /// <param name="valueType"></param>
         private void SetValueOnObject<T>(T destination, string valueName, object objectValue, Type valueType)
         {
             object o = null;
@@ -306,6 +352,13 @@ namespace Nulah.VSIX.TaskTool.Data
 
         }
 
+        /// <summary>
+        /// Takes the results of an SQLite query, and serialises into a List <typeparamref name="T"/>
+        /// <para>This method always returns a list object, so null checks are not required</para>
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="reader"></param>
+        /// <returns></returns>
         private List<T> ReaderToType<T>(SQLiteDataReader reader)
         {
             var typeProps = NulahStandardLib.GetPropertiesForType<T>();
@@ -335,6 +388,11 @@ namespace Nulah.VSIX.TaskTool.Data
             return l;
         }
 
+        /// <summary>
+        /// Returns the SQLite type for a given C# type
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
         public string TypeToSQLType(Type type)
         {
             if (_sqliteTypes.ContainsKey(type))
@@ -345,6 +403,14 @@ namespace Nulah.VSIX.TaskTool.Data
             throw new Exception($"Given type {type.FullName} does not have a valid map to a SQLite type.");
         }
 
+        /// <summary>
+        /// Inserts the object into the database given its data store key, returning true if any rows were created
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="dataStore"></param>
+        /// <param name="query"></param>
+        /// <param name="insertObject"></param>
+        /// <returns></returns>
         public bool Insert<T>(string dataStore, string query, T insertObject)
         {
             using (var conn = GetConnection(dataStore))
@@ -368,6 +434,14 @@ namespace Nulah.VSIX.TaskTool.Data
             return false;
         }
 
+        /// <summary>
+        /// Queries the database from the given data store key, returning all results found.
+        /// <para>List will be empty if no results are found</para>
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="dataStore"></param>
+        /// <param name="query"></param>
+        /// <returns></returns>
         public List<T> Query<T>(string dataStore, string query)
         {
             using (var conn = GetConnection(dataStore))
@@ -381,14 +455,23 @@ namespace Nulah.VSIX.TaskTool.Data
             }
         }
 
-        public List<T> Query<T>(string dataStore, string query, object queryObject)
+        /// <summary>
+        /// Queries the database from the given data store key, returning all results found.
+        /// <para>List will be empty if no results are found</para>
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="dataStore"></param>
+        /// <param name="query"></param>
+        /// <param name="queryParameters"></param>
+        /// <returns></returns>
+        public List<T> Query<T>(string dataStore, string query, object queryParameters)
         {
             using (var conn = GetConnection(dataStore))
             {
                 conn.Open();
                 using (var cmd = new SQLiteCommand(query, conn))
                 {
-                    var objectParams = NulahStandardLib.GetPropertiesAndValuesForObject(queryObject);
+                    var objectParams = NulahStandardLib.GetPropertiesAndValuesForObject(queryParameters);
                     foreach (var param in objectParams)
                     {
                         AddValueToQueryParameters(param.Key, param.Value, cmd.Parameters);
@@ -398,14 +481,23 @@ namespace Nulah.VSIX.TaskTool.Data
                 }
             }
         }
-        public bool Update<T>(string dataStore, string query, object queryObject)
+
+        /// <summary>
+        /// Updates the value in the given database by its data store key
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="dataStore"></param>
+        /// <param name="query"></param>
+        /// <param name="queryParameters"></param>
+        /// <returns></returns>
+        public bool Update<T>(string dataStore, string query, object queryParameters)
         {
             using (var conn = GetConnection(dataStore))
             {
                 conn.Open();
                 using (var cmd = new SQLiteCommand(query, conn))
                 {
-                    var objectParams = NulahStandardLib.GetPropertiesAndValuesForObject(queryObject);
+                    var objectParams = NulahStandardLib.GetPropertiesAndValuesForObject(queryParameters);
                     foreach (var param in objectParams)
                     {
                         AddValueToQueryParameters(param.Key, param.Value, cmd.Parameters);
@@ -421,6 +513,12 @@ namespace Nulah.VSIX.TaskTool.Data
             return false;
         }
 
+        /// <summary>
+        /// Empties all data from the database from its given data store key.
+        /// <para>This method is destructive and it should be assumed cannot be undone</para>
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="dataStore"></param>
         public void Truncate<T>(string dataStore)
         {
             var createQuery = $"DELETE FROM [{typeof(T).Name}]; VACUUM";
