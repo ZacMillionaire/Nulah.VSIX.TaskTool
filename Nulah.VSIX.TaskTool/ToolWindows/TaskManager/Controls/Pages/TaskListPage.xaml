@@ -19,7 +19,7 @@
         </ResourceDictionary>
     </Page.Resources>
     <ScrollViewer VerticalScrollBarVisibility="Visible">
-        <StackPanel HorizontalAlignment="Stretch">
+        <StackPanel>
             <StackPanel.Style>
                 <Style TargetType="StackPanel">
                     <Style.Setters>
@@ -48,97 +48,7 @@
                 </TextBlock.Style>
             Loading Tasks...
             </TextBlock>-->
-            <ItemsControl ItemsSource="{Binding Tasks}" HorizontalAlignment="Stretch">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition/>
-                                <RowDefinition/>
-                            </Grid.RowDefinitions>
-                            <TextBlock Grid.Row="0" Text="{Binding Key}"/>
-                            <ItemsControl Grid.Row="1" ItemsSource="{Binding Value}" IsEnabled="{Binding TaskListReady}">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <Border SnapsToDevicePixels="True" BorderThickness="0,1" BorderBrush="Black" Background="White" Margin="0,0,0,5" MouseDown="Border_MouseDown">
-                                            <StackPanel Margin="0,0,0,0">
-                                                <Border SnapsToDevicePixels="True" BorderThickness="0,0,0,1" BorderBrush="Gray" Padding="5">
-                                                    <Border.Style>
-                                                        <Style TargetType="Border">
-                                                            <Style.Setters>
-                                                                <Setter Property="Background" Value="{StaticResource TaskTitleDefault_Background}"/>
-                                                            </Style.Setters>
-                                                            <Style.Triggers>
-                                                                <DataTrigger Binding="{Binding InProgress}" Value="True">
-                                                                    <Setter Property="Background" Value="{StaticResource TaskTitleInProgress_Background}"/>
-                                                                </DataTrigger>
-                                                                <DataTrigger Binding="{Binding IsComplete}" Value="True">
-                                                                    <Setter Property="Background" Value="{StaticResource TaskTitleCompleted_Background}"/>
-                                                                </DataTrigger>
-                                                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Page}}, Path=DataContext.TaskListReady}" Value="False">
-                                                                    <Setter Property="Background" Value="{StaticResource TaskTitleDisabled_Background}" />
-                                                                </DataTrigger>
-                                                            </Style.Triggers>
-                                                        </Style>
-                                                    </Border.Style>
-                                                    <TextBlock TextWrapping="Wrap" Grid.Column="0" Text="{Binding Title}" FontWeight="Bold" />
-                                                </Border>
-                                                <Border SnapsToDevicePixels="True" BorderThickness="0,0,0,1" BorderBrush="LightGray" Padding="2">
-                                                    <Border.Style>
-                                                        <Style TargetType="Border">
-                                                            <Style.Setters>
-                                                                <Setter Property="Background" Value="{StaticResource TaskDefault_Background}"/>
-                                                            </Style.Setters>
-                                                            <Style.Triggers>
-                                                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Page}}, Path=DataContext.TaskListReady}" Value="False">
-                                                                    <Setter Property="Background" Value="{StaticResource TaskTitleDisabled_Background}" />
-                                                                </DataTrigger>
-                                                            </Style.Triggers>
-                                                        </Style>
-                                                    </Border.Style>
-                                                    <Grid HorizontalAlignment="Right">
-                                                        <Grid.ColumnDefinitions>
-                                                            <ColumnDefinition Width="auto"/>
-                                                            <ColumnDefinition Width="auto"/>
-                                                        </Grid.ColumnDefinitions>
-                                                        <CheckBox Grid.Column="0" IsChecked="{Binding InProgress}" Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Page}},Path=DataContext.InProgressChangeCommand}" CommandParameter="{Binding}">
-                                                            <TextBlock TextWrapping="Wrap">In Progress</TextBlock>
-                                                        </CheckBox>
-                                                        <CheckBox Grid.Column="1" IsChecked="{Binding IsComplete}" Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Page}},Path=DataContext.IsCompleteChangeCommand}" CommandParameter="{Binding}">
-                                                            <TextBlock TextWrapping="Wrap">Complete</TextBlock>
-                                                        </CheckBox>
-                                                    </Grid>
-                                                </Border>
-                                                <TextBlock Padding="5" TextWrapping="Wrap" Text="{Binding Content}">
-                                                    <TextBlock.Style>
-                                                        <Style TargetType="TextBlock">
-                                                            <Style.Setters>
-                                                                <Setter Property="Background" Value="{StaticResource TaskDefault_Background}"/>
-                                                            </Style.Setters>
-                                                            <Style.Triggers>
-                                                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Page}}, Path=DataContext.TaskListReady}" Value="False">
-                                                                    <Setter Property="Background" Value="{StaticResource TaskTitleDisabled_Background}" />
-                                                                </DataTrigger>
-                                                            </Style.Triggers>
-                                                        </Style>
-                                                    </TextBlock.Style>
-                                                </TextBlock>
-                                                <Border>
-
-                                                </Border>
-                                            </StackPanel>
-                                        </Border>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                        </Grid>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-
-                <!--<ItemsControl ItemsSource="{Binding Tasks}" IsEnabled="{Binding TaskListReady}">
+            <ItemsControl ItemsSource="{Binding Tasks}" IsEnabled="{Binding TaskListReady}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Border SnapsToDevicePixels="True" BorderThickness="0,1" BorderBrush="Black" Background="White" Margin="0,0,0,5" MouseDown="Border_MouseDown">
@@ -211,9 +121,7 @@
                         </Border>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
-            </ItemsControl>-->
             </ItemsControl>
-
         </StackPanel>
     </ScrollViewer>
 </Page>
