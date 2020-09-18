@@ -179,7 +179,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="ToolWindows\TaskManager\Resources\TaskManagerWindowCommand.png" />
+    <Resource Include="ToolWindows\TaskManager\Resources\TaskManagerWindowCommand.png" />
     <Content Include="ToolWindows\TaskManager\Resources\TaskManagerWindowPackage.ico" />
     <VSCTCompile Include="ToolWindows\TaskManager\TaskManagerWindowPackageDefinition.vsct">
       <Generator>VsctGenerator</Generator>
