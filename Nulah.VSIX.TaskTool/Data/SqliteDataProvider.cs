@@ -92,6 +92,18 @@ namespace Nulah.VSIX.TaskTool.Data
         }
 
         /// <summary>
+        /// Removes a data source registration based on given sourceName key
+        /// </summary>
+        /// <param name="sourceName"></param>
+        public void UnregisterDatasource(string sourceName)
+        {
+            if (_dataSourceConnectionStrings.ContainsKey(sourceName) == true)
+            {
+                _dataSourceConnectionStrings.Remove(sourceName);
+            }
+        }
+
+        /// <summary>
         /// Checks for the existance of a database connection string, based on the name of the database given
         /// </summary>
         /// <param name="sourceName"></param>

@@ -38,7 +38,10 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager.ViewModels
             get { return _selectedTaskItem; }
             set
             {
-                _selectedTaskItem = value;
+                if (value != null)
+                {
+                    _selectedTaskItem = value;
+                }
                 OnPropertyChanged(nameof(SelectedTaskItem));
                 SelectedTaskListChange?.Invoke(this, _selectedTaskItem);
             }
@@ -103,6 +106,24 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager.ViewModels
             var tasklistSourceManager = new TaskListSourceManager();
             tasklistSourceManager.ShowDialog();
             TaskListModified?.Invoke(this, null);
+        }
+
+        internal void UpdateTaskList(List<DatabaseSource> updatedTaskList)
+        {
+            // Used to preserve the last selected item across AvailableTaskList updates
+            var selectedTaskStoreDbName = _selectedTaskItem.DatabaseName;
+            AvailableTaskList = updatedTaskList;
+
+            if (updatedTaskList.Any(x => x.DatabaseName == selectedTaskStoreDbName) == false)
+            {
+                // Default to the first task in the list if our previous selected task list stopped existing
+                SelectedTaskItem = AvailableTaskList.First();
+            }
+            else
+            {
+                // Select the previously selected item
+                SelectedTaskItem = AvailableTaskList.First(x => x.DatabaseName == selectedTaskStoreDbName);
+            }
         }
     }
 }

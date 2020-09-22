@@ -50,22 +50,8 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager
             CreateAppDataFolder();
             CreateAppDatabases();
 
-            _taskDatabases = new Dictionary<string, DatabaseSource>
-            {
-                {
-                    GLOBAL_DB_DATASOURCE_NAME,
-                    new DatabaseSource{
-                        DisplayName = "Global",
-                        DatabaseName = GLOBAL_DB_DATASOURCE_NAME,
-                        Location = Path.Combine(_applicationDataLocation, $"Nulah.TaskList.{NULAH_DB_EXTENSION}")
-                    }
-                },
-            };
-
-            GetTaskListsForOpenSolution();
-
             // Get databases for loaded solution and projects - if a solution/project is open
-            AvailableTaskLists = _taskDatabases.Values.ToList();
+            GetDatabaseList();
 
             // Default to using Global database for now
             SwitchDatabase(_taskDatabases[GLOBAL_DB_DATASOURCE_NAME]);
@@ -81,6 +67,10 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager
             return GetTaskListsForOpenSolution();
         }
 
+        /// <summary>
+        /// Returns all solutions for the given project, populating db metadata if a valid task file is found
+        /// </summary>
+        /// <returns></returns>
         private List<SolutionProject> GetTaskListsForOpenSolution()
         {
             // Any access to the VS Shell or internals should only be done on the main UI thread
@@ -107,14 +97,61 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager
                 return;
             }
 
-            _sqliteProvider.CreateOrRegisterDataSource(nulahTaskFiles.Name, nulahTaskFiles.FullName);
-            var dbSchema = _sqliteProvider.Query<NulahDBMeta>(nulahTaskFiles.Name, $"SELECT * FROM [{nameof(NulahDBMeta)}] LIMIT 1");
-
-            if (dbSchema.FirstOrDefault() != null)
+            if (_sqliteProvider.DataSourceExists(nulahTaskFiles.Name) == false)
             {
-                solutionProject.Database = dbSchema.First();
+                var extensionlessFileName = Path.GetFileNameWithoutExtension(nulahTaskFiles.Name);
+                _sqliteProvider.CreateOrRegisterDataSource(extensionlessFileName, nulahTaskFiles.FullName);
+                var dbSchema = _sqliteProvider.Query<NulahDBMeta>(extensionlessFileName, $"SELECT * FROM [{nameof(NulahDBMeta)}] LIMIT 1");
+
+                if (dbSchema.FirstOrDefault() != null)
+                {
+                    solutionProject.Database = dbSchema.First();
+                }
+                else
+                {
+                    // In the unlikely event that the task database isn't valid, unregister it
+                    _sqliteProvider.UnregisterDatasource(nulahTaskFiles.Name);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets all valid task databases, and updates <see cref="AvailableTaskLists"/> with all found
+        /// </summary>
+        /// <returns></returns>
+        public List<DatabaseSource> GetDatabaseList()
+        {
+            _taskDatabases = new Dictionary<string, DatabaseSource>
+            {
+                {
+                    GLOBAL_DB_DATASOURCE_NAME,
+                    new DatabaseSource{
+                        DisplayName = "Global",
+                        DatabaseName = GLOBAL_DB_DATASOURCE_NAME,
+                        Location = Path.Combine(_applicationDataLocation, $"Nulah.TaskList.{NULAH_DB_EXTENSION}")
+                    }
+                },
+            };
+
+            var taskLists = GetTaskListsForOpenSolution();
+
+            foreach (var taskList in taskLists)
+            {
+                if (taskList.NoDatabase == false)
+                {
+                    _taskDatabases.Add(taskList.Database.TaskListName, new DatabaseSource
+                    {
+                        DatabaseName = taskList.Database.ProjectName,
+                        DisplayName = taskList.Database.TaskListName,
+                        Location = Path.Combine(taskList.ParentDirectory, $"{taskList.Database.ProjectName}.{NULAH_DB_EXTENSION}")
+                    });
+                }
             }
 
+            // Update the available task list
+            AvailableTaskLists = _taskDatabases.Values.ToList();
+
+            return AvailableTaskLists;
         }
 
         /// <summary>

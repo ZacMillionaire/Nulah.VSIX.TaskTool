@@ -87,7 +87,9 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager.ViewModels
 
         private void TaskSourceViewModel_TaskListModified(object sender, EventArgs e)
         {
-            //throw new NotImplementedException();
+            // Update task list on the database control
+            // This is a bit dumb but a future refactor will pull that control into this VM
+            TaskSourceViewModel.UpdateTaskList(_taskListManager.GetDatabaseList());
         }
 
         private void TaskSourceViewModel_SelectedTaskListChange(object sender, DatabaseSource targetTaskSource)
