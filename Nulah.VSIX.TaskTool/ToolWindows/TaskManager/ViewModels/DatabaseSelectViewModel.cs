@@ -6,11 +6,18 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Navigation;
 
+using Microsoft.VisualStudio.Shell;
+
+using Nulah.VSIX.TaskTool.StandardLib;
 using Nulah.VSIX.TaskTool.StandardLib.Models;
 using Nulah.VSIX.TaskTool.ToolWindows.TaskManager.Models;
+using Nulah.VSIX.TaskTool.ToolWindows.TaskManager.Windows;
 
 namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager.ViewModels
 {
+    /// <summary>
+    /// TODO: move this control into <see cref="TaskListControlViewModel"/> to avoid the weird stuff I'm doing with relay commands
+    /// </summary>
     public class DatabaseSelectViewModel : ViewModelBase
     {
         public ICommand UseGlobalTaskStoreCommand { get; private set; }
@@ -40,6 +47,7 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager.ViewModels
         private bool _globalStoreInUse = false;
 
         public event EventHandler<DatabaseSource> SelectedTaskListChange;
+        public event EventHandler TaskListModified;
 
         /// <summary>
         /// Design time constructor
@@ -60,13 +68,24 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager.ViewModels
             SelectedTaskItem = AvailableTaskList.First();
         }
 
+        /// <summary>
+        /// Runtime constructor
+        /// </summary>
+        /// <param name="availableDatabases"></param>
+        /// <param name="activeDatabase"></param>
         public DatabaseSelectViewModel(List<DatabaseSource> availableDatabases, DatabaseSource activeDatabase)
         {
             AvailableTaskList = availableDatabases;
             SelectedTaskItem = activeDatabase;
 
             UseGlobalTaskStoreCommand = new RelayCommand(_ => SwitchToGlobalTaskList(), (x) => CanUseGlobalStore());
-            CreateSolutionTaskStoreCommand = new RelayCommand(_ => CreateSolutionTaskStore(), (x) => false);
+            CreateSolutionTaskStoreCommand = new RelayCommand(_ => CreateSolutionTaskStore(), (x) => CanCreateTask());
+        }
+
+        private bool CanCreateTask()
+        {
+            // TODO: disable while create task window is open maybe
+            return true;
         }
 
         private bool CanUseGlobalStore()
@@ -81,7 +100,9 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager.ViewModels
 
         private void CreateSolutionTaskStore()
         {
-
+            var tasklistSourceManager = new TaskListSourceManager();
+            tasklistSourceManager.ShowDialog();
+            TaskListModified?.Invoke(this, null);
         }
     }
 }

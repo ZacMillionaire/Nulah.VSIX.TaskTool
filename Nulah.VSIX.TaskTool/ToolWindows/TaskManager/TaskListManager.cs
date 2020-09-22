@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
+using VSSHell = Microsoft.VisualStudio.Shell;
+
 using Nulah.VSIX.TaskTool.Data;
 using Nulah.VSIX.TaskTool.StandardLib;
 using Nulah.VSIX.TaskTool.ToolWindows.TaskManager.Models;
@@ -16,6 +18,7 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager
         private readonly SqliteProvider _sqliteProvider;
         private const string GLOBAL_DB_DATASOURCE_NAME = "GLOBAL";
         private const string APP_SETTINGS_DB_DATASOURCE_NAME = "APPSETTINGS";
+        private const string NULAH_DB_EXTENSION = "nulahdb";
 
         private List<Task> _currentTaskList { get; set; }
         public List<DatabaseSource> AvailableTaskLists { get; private set; }
@@ -54,16 +57,64 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager
                     new DatabaseSource{
                         DisplayName = "Global",
                         DatabaseName = GLOBAL_DB_DATASOURCE_NAME,
-                        Location = Path.Combine(_applicationDataLocation, "Nulah.TaskList.sqlitedb")
+                        Location = Path.Combine(_applicationDataLocation, $"Nulah.TaskList.{NULAH_DB_EXTENSION}")
                     }
                 },
             };
+
+            GetTaskListsForOpenSolution();
 
             // Get databases for loaded solution and projects - if a solution/project is open
             AvailableTaskLists = _taskDatabases.Values.ToList();
 
             // Default to using Global database for now
             SwitchDatabase(_taskDatabases[GLOBAL_DB_DATASOURCE_NAME]);
+        }
+
+        /// <summary>
+        /// Returns all projects for the loaded solution
+        /// </summary>
+        /// <returns></returns>
+        public List<SolutionProject> GetProjectsForOpenSolution()
+        {
+            VSSHell.ThreadHelper.ThrowIfNotOnUIThread();
+            return GetTaskListsForOpenSolution();
+        }
+
+        private List<SolutionProject> GetTaskListsForOpenSolution()
+        {
+            // Any access to the VS Shell or internals should only be done on the main UI thread
+            VSSHell.ThreadHelper.ThrowIfNotOnUIThread();
+            var VSI = new VisualStudioInternals();
+            var projects = VSI.GetProjectsForSolution();
+
+            foreach (var project in projects)
+            {
+                GetTaskDatabaseForProject(project);
+            }
+
+            return projects;
+        }
+
+        private void GetTaskDatabaseForProject(SolutionProject solutionProject)
+        {
+            var fi = new FileInfo(solutionProject.FilePath);
+            var nulahTaskFiles = fi.Directory.EnumerateFiles()
+                .FirstOrDefault(x => x.Extension == $".{NULAH_DB_EXTENSION}");
+
+            if (nulahTaskFiles == null)
+            {
+                return;
+            }
+
+            _sqliteProvider.CreateOrRegisterDataSource(nulahTaskFiles.Name, nulahTaskFiles.FullName);
+            var dbSchema = _sqliteProvider.Query<NulahDBMeta>(nulahTaskFiles.Name, $"SELECT * FROM [{nameof(NulahDBMeta)}] LIMIT 1");
+
+            if (dbSchema.FirstOrDefault() != null)
+            {
+                solutionProject.Database = dbSchema.First();
+            }
+
         }
 
         /// <summary>
@@ -84,35 +135,90 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager
         private void CreateAppDatabases()
         {
             CreateApplicationSettingsDatabase();
-            CreateDatabase(GLOBAL_DB_DATASOURCE_NAME, "Nulah.TaskList");
+            CreateAppDataDatabase(GLOBAL_DB_DATASOURCE_NAME, "Nulah.TaskList", new NulahDBMeta
+            {
+                TaskListName = "Nulah.TaskList"
+            });
         }
 
         /// <summary>
-        /// Create a database
+        /// Creates a task database in the given location, if a project database already exists, false is returned
+        /// <para>Regardless of database creation, the datasource will be registered and available</para>
+        /// </summary>
+        /// <param name="projectName"></param>
+        /// <param name="projectLocation"></param>
+        public bool CreateProjectDatabase(string projectName, string projectLocation)
+        {
+            var databaseLocation = Path.Combine(projectLocation, $"{projectName}.{NULAH_DB_EXTENSION}");
+            var databaseCreated = _sqliteProvider.CreateOrRegisterDataSource(projectName, databaseLocation);
+            // Track the new task list database in the application settings database if this is the first time we're creating it
+            if (databaseCreated == true)
+            {
+                _sqliteProvider.CreateTable<Task>(projectName);
+
+                // Create metadata
+                _sqliteProvider.CreateTable<NulahDBMeta>(projectName);
+                var nulahDBMetaPropertyList = NulahStandardLib.GetPropertiesForType<NulahDBMeta>();
+                var dbMetadata = new NulahDBMeta
+                {
+                    IsProjectDatabase = true,
+                    ProjectName = projectName,
+                    ProjectOriginalLocation = projectLocation,
+                    TaskListName = projectName // TODO: Maybe add override to this later for project task lists?
+                };
+
+                _sqliteProvider.Insert<NulahDBMeta>(projectName,
+                    $"INSERT INTO [{nameof(NulahDBMeta)}] ({string.Join(", ", nulahDBMetaPropertyList.Select(x => $"[{ x.Name}]"))}) VALUES ({string.Join(",", nulahDBMetaPropertyList.Select(x => $"@{x.Name}"))})",
+                    dbMetadata
+                );
+
+                CreateDatabaseEntry(databaseLocation);
+            }
+
+            return databaseCreated;
+        }
+
+        /// <summary>
+        /// Create a database in the users %appdata%
         /// </summary>
         /// <param name="datasourceName"></param>
         /// <param name="databaseName"></param>
-        public void CreateDatabase(string datasourceName, string databaseName)
+        public void CreateAppDataDatabase(string datasourceName, string databaseName, NulahDBMeta dbMetadata)
         {
-            var databaseLocation = Path.Combine(_applicationDataLocation, $"{databaseName}.sqlitedb");
+            var databaseLocation = Path.Combine(_applicationDataLocation, $"{databaseName}.{NULAH_DB_EXTENSION}");
 
-            var databaseCreated = _sqliteProvider.CreateDataSource(datasourceName, databaseLocation);
+            var databaseCreated = _sqliteProvider.CreateOrRegisterDataSource(datasourceName, databaseLocation);
             // Track the new task list database in the application settings database if this is the first time we're creating it
             if (databaseCreated == true)
             {
                 _sqliteProvider.CreateTable<Task>(datasourceName);
+
+                // Create metadata
+                _sqliteProvider.CreateTable<NulahDBMeta>(datasourceName);
+                var nulahDBMetaPropertyList = NulahStandardLib.GetPropertiesForType<NulahDBMeta>();
+                _sqliteProvider.Insert<NulahDBMeta>(datasourceName,
+                    $"INSERT INTO [{nameof(NulahDBMeta)}] ({string.Join(", ", nulahDBMetaPropertyList.Select(x => $"[{ x.Name}]"))}) VALUES ({string.Join(",", nulahDBMetaPropertyList.Select(x => $"@{x.Name}"))})",
+                    dbMetadata
+                );
+
                 CreateDatabaseEntry(databaseLocation);
             }
         }
 
+        /// <summary>
+        /// Creates the database responsible for tracking all created databases, along with any other setting tables
+        /// </summary>
         private void CreateApplicationSettingsDatabase()
         {
-            var applicationDb = Path.Combine(_applicationDataLocation, "Nulah.Settings.sqlitedb");
-            _sqliteProvider.CreateDataSource(APP_SETTINGS_DB_DATASOURCE_NAME, applicationDb);
+            var applicationDb = Path.Combine(_applicationDataLocation, $"Nulah.Settings.{NULAH_DB_EXTENSION}");
+            _sqliteProvider.CreateOrRegisterDataSource(APP_SETTINGS_DB_DATASOURCE_NAME, applicationDb);
 
             _sqliteProvider.CreateTable<Database>(APP_SETTINGS_DB_DATASOURCE_NAME);
         }
-
+        /// <summary>
+        /// Creates a record of a created nulah database location given in the global app settings database
+        /// </summary>
+        /// <param name="databaseLocation"></param>
         public void CreateDatabaseEntry(string databaseLocation)
         {
             var appSettingsPropertyList = NulahStandardLib.GetPropertiesForType<Database>();
@@ -256,6 +362,5 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager
             LoadTasksForDatabase(_currentTaskDatabase);
             return update;
         }
-
     }
 }

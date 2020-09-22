@@ -78,10 +78,16 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager.ViewModels
 
             TaskSourceViewModel = new DatabaseSelectViewModel(_taskListManager.AvailableTaskLists, _taskListManager.AvailableTaskLists.First());
             TaskSourceViewModel.SelectedTaskListChange += TaskSourceViewModel_SelectedTaskListChange;
+            TaskSourceViewModel.TaskListModified += TaskSourceViewModel_TaskListModified;
 
 
             // Mark that the viewmodel has been properly intialised
             _viewModelReady = true;
+        }
+
+        private void TaskSourceViewModel_TaskListModified(object sender, EventArgs e)
+        {
+            //throw new NotImplementedException();
         }
 
         private void TaskSourceViewModel_SelectedTaskListChange(object sender, DatabaseSource targetTaskSource)

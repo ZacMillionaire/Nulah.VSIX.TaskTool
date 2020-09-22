@@ -55,14 +55,20 @@ namespace Nulah.VSIX.TaskTool.Data
         }
 
         /// <summary>
-        /// If the datasource does not already exist, an empty database will be created and will return true.
-        /// <para>A return of false means the database already existed and was not created</para>
+        /// If the datasource does not already exist, an empty database will be created and will return true. Otherwise, registers an existing database with the given <paramref name="sourceName"/> data source keyname
+        /// <para>A return of false means the database already existed and was not created, but the datasource will be registered (as the database exists and is valid)</para>
         /// </summary>
         /// <param name="sourceName">Used to identify the database connection string by name</param>
         /// <param name="dataSource">Location for the sqlite database to be stored</param>
         /// <returns></returns>
-        public bool CreateDataSource(string sourceName, string dataSource)
+        public bool CreateOrRegisterDataSource(string sourceName, string dataSource)
         {
+            // Do nothing if the datasource has already been registered during constructor or another method
+            if (_dataSourceConnectionStrings.ContainsKey(sourceName) == true)
+            {
+                return false;
+            }
+
             var createdNewDatabase = false;
             if (SqliteFileExists(dataSource) == false)
             {
