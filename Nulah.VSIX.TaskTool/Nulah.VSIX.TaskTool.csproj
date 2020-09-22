@@ -72,6 +72,7 @@
     <Compile Include="StandardLib\Models\RelayCommand.cs" />
     <Compile Include="StandardLib\Models\ViewModelBase.cs" />
     <Compile Include="StandardLib\NulahStandardLib.cs" />
+    <Compile Include="StandardLib\VisualStudio.cs" />
     <Compile Include="ToolWindows\TaskManager\Controls\DatabaseSelectControl.xaml.cs">
       <DependentUpon>DatabaseSelectControl.xaml</DependentUpon>
     </Compile>
@@ -92,6 +93,9 @@
     </Compile>
     <Compile Include="ToolWindows\TaskManager\Models\ApplicationSetting.cs" />
     <Compile Include="ToolWindows\TaskManager\Models\Database.cs" />
+    <Compile Include="ToolWindows\TaskManager\Models\DatabaseSource.cs" />
+    <Compile Include="ToolWindows\TaskManager\Models\NulahDBMeta.cs" />
+    <Compile Include="ToolWindows\TaskManager\Models\TaskDatabase.cs" />
     <Compile Include="ToolWindows\TaskManager\Models\Tasks\Task.cs" />
     <Compile Include="ToolWindows\TaskManager\TaskListManager.cs" />
     <Compile Include="ToolWindows\TaskManager\TaskManagerWindow.cs" />
@@ -111,6 +115,10 @@
     <Compile Include="ToolWindows\TaskManager\ViewModels\Pages\ViewTaskDetailsViewModel.cs" />
     <Compile Include="ToolWindows\TaskManager\ViewModels\TaskListControlViewModel.cs" />
     <Compile Include="ToolWindows\TaskManager\ViewModels\TaskManagerMainViewModel.cs" />
+    <Compile Include="ToolWindows\TaskManager\ViewModels\Windows\TaskListSourceManagerViewModel.cs" />
+    <Compile Include="ToolWindows\TaskManager\Windows\TaskListSourceManager.xaml.cs">
+      <DependentUpon>TaskListSourceManager.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -129,6 +137,10 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="ToolWindows\TaskManager\Windows\TaskListSourceManager.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Resource Include="IconResources.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -178,7 +190,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="ToolWindows\TaskManager\Resources\TaskManagerWindowCommand.png" />
+    <Resource Include="ToolWindows\TaskManager\Resources\TaskManagerWindowCommand.png" />
     <Content Include="ToolWindows\TaskManager\Resources\TaskManagerWindowPackage.ico" />
     <VSCTCompile Include="ToolWindows\TaskManager\TaskManagerWindowPackageDefinition.vsct">
       <Generator>VsctGenerator</Generator>

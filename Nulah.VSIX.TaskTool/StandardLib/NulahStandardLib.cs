@@ -35,9 +35,21 @@ namespace Nulah.VSIX.TaskTool.StandardLib
                     Name = prop.Name,
                 };
 
-                // If the value type is nullable, get its underlying type
-                if (valueInfo.IsNullableType)
+                // Override strings to be a nullable type
+                if (prop.PropertyType == typeof(string))
                 {
+                    valueInfo.IsNullableType = true;
+                }
+
+                // Override strings to be a nullable type
+                if (prop.PropertyType == typeof(string))
+                {
+                    valueInfo.IsNullableType = true;
+                    valueInfo.ValueType = typeof(string);
+                }
+                else if (valueInfo.IsNullableType)
+                {
+                    // If the value type is nullable, get its underlying type
                     valueInfo.ValueType = prop.PropertyType.GetGenericArguments()[0];
                 }
                 else
@@ -70,9 +82,15 @@ namespace Nulah.VSIX.TaskTool.StandardLib
                     Name = prop.Name,
                 };
 
-                // If the value type is nullable, get its underlying type
-                if (valueInfo.IsNullableType)
+                // Override strings to be a nullable type
+                if (prop.PropertyType == typeof(string))
                 {
+                    valueInfo.IsNullableType = true;
+                    valueInfo.ValueType = typeof(string);
+                }
+                else if (valueInfo.IsNullableType)
+                {
+                    // If the value type is nullable, get its underlying type
                     valueInfo.ValueType = prop.PropertyType.GetGenericArguments()[0];
                 }
                 else
@@ -106,9 +124,15 @@ namespace Nulah.VSIX.TaskTool.StandardLib
                     Value = prop.GetValue(valueObject)
                 };
 
-                // If the value type is nullable, get its underlying type
-                if (valueInfo.IsNullableType)
+                // Override strings to be a nullable type
+                if (prop.PropertyType == typeof(string))
                 {
+                    valueInfo.IsNullableType = true;
+                    valueInfo.ValueType = typeof(string);
+                }
+                else if (valueInfo.IsNullableType)
+                {
+                    // If the value type is nullable, get its underlying type
                     valueInfo.ValueType = prop.PropertyType.GetGenericArguments()[0];
                 }
                 else
