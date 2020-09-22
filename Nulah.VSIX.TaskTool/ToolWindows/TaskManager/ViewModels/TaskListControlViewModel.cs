@@ -6,11 +6,16 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
+using VSShell = Microsoft.VisualStudio.Shell;
+
+using Nulah.VSIX.TaskTool.StandardLib;
+
 using Nulah.VSIX.TaskTool.StandardLib.Models;
 using Nulah.VSIX.TaskTool.ToolWindows.TaskManager.Controls;
 using Nulah.VSIX.TaskTool.ToolWindows.TaskManager.Controls.Pages;
 using Nulah.VSIX.TaskTool.ToolWindows.TaskManager.Models;
 using Nulah.VSIX.TaskTool.ToolWindows.TaskManager.ViewModels.Pages;
+using EnvDTE;
 
 namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager.ViewModels
 {
@@ -80,9 +85,55 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager.ViewModels
             TaskSourceViewModel.SelectedTaskListChange += TaskSourceViewModel_SelectedTaskListChange;
             TaskSourceViewModel.TaskListModified += TaskSourceViewModel_TaskListModified;
 
+            BindSolutionChangeEvent();
 
             // Mark that the viewmodel has been properly intialised
             _viewModelReady = true;
+        }
+
+        private SolutionEvents _solutionEvents;
+
+        private void BindSolutionChangeEvent()
+        {
+            // Any access to the VS Shell or internals should only be done on the main UI thread
+            VSShell.ThreadHelper.ThrowIfNotOnUIThread();
+            var VSI = new VisualStudioInternals();
+            var dte = VSI.GetActiveIDE();
+            _solutionEvents = dte.Events.SolutionEvents;
+
+            _solutionEvents.Opened += SolutionEvents_Opened;
+            _solutionEvents.AfterClosing += _solutionEvents_AfterClosing;
+
+            /*
+            _solutionEvents.ProjectAdded += _solutionEvents_ProjectAdded;
+            _solutionEvents.ProjectRemoved += _solutionEvents_ProjectRemoved;
+            // rename should open a dialog prompt to rename a task file if it exists
+            _solutionEvents.ProjectRenamed += _solutionEvents_ProjectRenamed;
+            */
+        }
+
+        private void SolutionEvents_Opened()
+        {
+            TaskSourceViewModel.UpdateTaskList(_taskListManager.GetDatabaseList());
+        }
+
+        private void _solutionEvents_AfterClosing()
+        {
+            TaskSourceViewModel.UpdateTaskList(_taskListManager.GetDatabaseList());
+        }
+
+        private void _solutionEvents_ProjectAdded(Project Project)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void _solutionEvents_ProjectRemoved(Project Project)
+        {
+            throw new NotImplementedException();
+        }
+        private void _solutionEvents_ProjectRenamed(Project Project, string OldName)
+        {
+            throw new NotImplementedException();
         }
 
         private void TaskSourceViewModel_TaskListModified(object sender, EventArgs e)
