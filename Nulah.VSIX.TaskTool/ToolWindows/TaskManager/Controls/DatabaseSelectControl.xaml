@@ -6,22 +6,29 @@
              xmlns:ViewModel="clr-namespace:Nulah.VSIX.TaskTool.ToolWindows.TaskManager.ViewModels"
              xmlns:local="clr-namespace:Nulah.VSIX.TaskTool.ToolWindows.TaskManager.Controls"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
-    <UserControl.DataContext>
+             d:DesignHeight="450" d:DesignWidth="800"
+             d:DataContext="{d:DesignInstance Type=ViewModel:DatabaseSelectViewModel, IsDesignTimeCreatable=True}"
+             >
+    <!--<UserControl.DataContext>
         <ViewModel:DatabaseSelectViewModel/>
-    </UserControl.DataContext>
-    <StackPanel x:Name="stackpanel">
-        <ComboBox IsEnabled="False">
-            <ComboBox.ItemTemplate>
-                <DataTemplate>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="{Binding Content}"></TextBlock>
-                    </StackPanel>
-                </DataTemplate>
-            </ComboBox.ItemTemplate>
-            <ComboBoxItem Content="Global" IsSelected="True"></ComboBoxItem>
-            <ComboBoxItem Content="Use Solution" IsEnabled="False"></ComboBoxItem>
-        </ComboBox>
+    </UserControl.DataContext>-->
+    <StackPanel>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+            <ComboBox Grid.Column="0" ItemsSource="{Binding Path=AvailableTaskList}" SelectedItem="{Binding SelectedTaskItem}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding DisplayName}"></TextBlock>
+                        </StackPanel>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+            <Button Grid.Column="1" Command="{Binding Path=CreateSolutionTaskStoreCommand}">Create Task List for Current Solution</Button>
+        </Grid>
         <!--
         <Button x:Name="TaskSourceButton">Change Task Source</Button>
         <Popup IsOpen="True" AllowsTransparency="True">
