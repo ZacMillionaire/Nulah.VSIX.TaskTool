@@ -83,8 +83,9 @@
                                     </TextBlock.Style>
                                 </TextBlock>
                                 <StackPanel Grid.Column="1" Orientation="Horizontal">
-                                    <Button Style="{StaticResource UI_Add_Datasource_Button}" IsEnabled="{Binding NoDatabase}" Command="{Binding CreateTaskDatabaseCommand}" CommandParameter="{Binding FilePath}" Margin="0,0,15,0" Width="32" Height="32"/>
-                                    <Button Style="{StaticResource UI_Open_Folder_Button}"  Command="{Binding OpenProjectCommand}" CommandParameter="{Binding ParentDirectory}" Margin="0,0,15,0" Width="32" Height="32"/>
+                                    <Button Style="{StaticResource UI_New_Task_List_Button}" IsEnabled="{Binding NoDatabase}" Command="{Binding CreateTaskDatabaseCommand}" CommandParameter="{Binding FilePath}" Margin="0,0,10,0" Width="32" Height="32"/>
+                                    <Button Style="{StaticResource UI_Delete_Task_List_Button}" IsEnabled="{Binding HasDatabase}" Command="{Binding DeleteTaskDatabaseCommand}" CommandParameter="{Binding ParentDirectory}" Margin="0,0,10,0" Width="32" Height="32"/>
+                                    <Button Style="{StaticResource UI_Open_Folder_Button}"  Command="{Binding OpenProjectCommand}" CommandParameter="{Binding ParentDirectory}" Margin="0,0,10,0" Width="32" Height="32"/>
                                 </StackPanel>
                             </Grid>
                         </Border>

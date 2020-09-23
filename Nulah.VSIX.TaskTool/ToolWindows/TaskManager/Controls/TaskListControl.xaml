@@ -23,8 +23,8 @@
         </Grid.RowDefinitions>
         <ToolBarTray SnapsToDevicePixels="True" Grid.Row="0" IsLocked="True">
             <ToolBar VerticalAlignment="Center">
-                <Button x:Name="BackToTaskListButton" IsEnabled="False" Style="{StaticResource ResourceKey=UI_Back_Button}" Click="BackToTaskListButton_Click"/>
-                <Button x:Name="NewTaskButton" Style="{StaticResource ResourceKey=UI_Add_Item_Button}" Click="NewTaskButton_Click"/>
+                <Button x:Name="BackToTaskListButton" IsEnabled="False" Style="{StaticResource ResourceKey=UI_Back_Button}" Click="BackToTaskListButton_Click" Width="24" Height="25"/>
+                <Button x:Name="NewTaskButton" Style="{StaticResource ResourceKey=UI_Add_Item_Button}" Click="NewTaskButton_Click" Width="24" Height="24"/>
             </ToolBar>
             <ToolBar x:Name="TaskListSection" VerticalAlignment="Center" >
                 <TextBlock Margin="5,0" VerticalAlignment="Center">Task List</TextBlock>

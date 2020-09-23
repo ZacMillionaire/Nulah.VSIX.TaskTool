@@ -35,17 +35,17 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager.ViewModels.Windows
             if (WPFHelpers.IsDesignTime)
             {
                 SolutionProjects = new List<ProjectListViewItem>() {
-                    new ProjectListViewItem(CreateTaskDatabase, OpenProjectLocation)
+                    new ProjectListViewItem(CreateTaskDatabase, DeleteTaskDatabase, OpenProjectLocation)
                     {
                         FilePath = "asdf",
                         Name = "test name 1"
                     },
-                    new ProjectListViewItem(CreateTaskDatabase, OpenProjectLocation)
+                    new ProjectListViewItem(CreateTaskDatabase, DeleteTaskDatabase, OpenProjectLocation)
                     {
                         FilePath = "asdf",
                         Name = "test name 2"
                     },
-                    new ProjectListViewItem(CreateTaskDatabase, OpenProjectLocation)
+                    new ProjectListViewItem(CreateTaskDatabase, DeleteTaskDatabase, OpenProjectLocation)
                     {
                         FilePath = "asdf",
                         Name = "test name 3"
@@ -60,7 +60,7 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager.ViewModels.Windows
         private void LoadSolutionProjects()
         {
             SolutionProjects = _taskListManager.GetProjectsForOpenSolution()
-                .Select(x => new ProjectListViewItem(CreateTaskDatabase, OpenProjectLocation)
+                .Select(x => new ProjectListViewItem(CreateTaskDatabase, DeleteTaskDatabase, OpenProjectLocation)
                 {
                     Database = x.Database,
                     FilePath = x.FilePath,
@@ -82,6 +82,11 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager.ViewModels.Windows
             }
         }
 
+        private void DeleteTaskDatabase(SolutionProject solutionProject)
+        {
+            throw new NotImplementedException();
+        }
+
         private void OpenProjectLocation(SolutionProject solutionProject)
         {
             Process.Start(solutionProject.ParentDirectory);
@@ -92,11 +97,16 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager.ViewModels.Windows
     {
 
         public ICommand CreateTaskDatabaseCommand { get; private set; }
+        public ICommand DeleteTaskDatabaseCommand { get; private set; }
         public ICommand OpenProjectCommand { get; private set; }
 
-        public ProjectListViewItem(Action<SolutionProject> createTaskDatabase, Action<SolutionProject> openProjectLocation)
+        public bool NoDatabase => Database == null;
+        public bool HasDatabase => false; // Database != null;
+
+        public ProjectListViewItem(Action<SolutionProject> createTaskDatabase, Action<SolutionProject> deleteTaskDatabase, Action<SolutionProject> openProjectLocation)
         {
             CreateTaskDatabaseCommand = new RelayCommand((x) => createTaskDatabase(this), x => true);
+            DeleteTaskDatabaseCommand = new RelayCommand((x) => deleteTaskDatabase(this), x => true);
             OpenProjectCommand = new RelayCommand((x) => openProjectLocation(this), x => true);
         }
     }
