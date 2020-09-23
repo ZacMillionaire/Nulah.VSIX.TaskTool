@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 
 using Nulah.VSIX.TaskTool.StandardLib;
@@ -27,8 +31,30 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager.ViewModels.Windows
         public TaskListSourceManagerViewModel()
         {
             _taskListManager = GetDependency<TaskListManager>();
-            LoadSolutionProjects();
 
+            if (WPFHelpers.IsDesignTime)
+            {
+                SolutionProjects = new List<ProjectListViewItem>() {
+                    new ProjectListViewItem(CreateTaskDatabase, OpenProjectLocation)
+                    {
+                        FilePath = "asdf",
+                        Name = "test name 1"
+                    },
+                    new ProjectListViewItem(CreateTaskDatabase, OpenProjectLocation)
+                    {
+                        FilePath = "asdf",
+                        Name = "test name 2"
+                    },
+                    new ProjectListViewItem(CreateTaskDatabase, OpenProjectLocation)
+                    {
+                        FilePath = "asdf",
+                        Name = "test name 3"
+                    }
+                };
+                return;
+            }
+
+            LoadSolutionProjects();
         }
 
         private void LoadSolutionProjects()
@@ -72,6 +98,22 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager.ViewModels.Windows
         {
             CreateTaskDatabaseCommand = new RelayCommand((x) => createTaskDatabase(this), x => true);
             OpenProjectCommand = new RelayCommand((x) => openProjectLocation(this), x => true);
+        }
+    }
+
+    public class IsLastItemInContainerConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var item = (DependencyObject)value;
+            var ic = ItemsControl.ItemsControlFromItemContainer(item);
+
+            return ic.ItemContainerGenerator.IndexFromContainer(item) == ic.Items.Count - 1;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
         }
     }
 }

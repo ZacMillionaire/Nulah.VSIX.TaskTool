@@ -73,6 +73,7 @@
     <Compile Include="StandardLib\Models\ViewModelBase.cs" />
     <Compile Include="StandardLib\NulahStandardLib.cs" />
     <Compile Include="StandardLib\VisualStudio.cs" />
+    <Compile Include="StandardLib\WPFHelpers.cs" />
     <Compile Include="ToolWindows\TaskManager\Controls\DatabaseSelectControl.xaml.cs">
       <DependentUpon>DatabaseSelectControl.xaml</DependentUpon>
     </Compile>
@@ -141,10 +142,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Resource Include="IconResources.xaml">
+    <Page Include="IconResources.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Resource>
+    </Page>
     <Page Include="ToolWindows\TaskManager\Controls\DatabaseSelectControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
