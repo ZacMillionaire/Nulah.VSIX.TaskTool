@@ -137,7 +137,7 @@ namespace Nulah.VSIX.TaskTool.ToolWindows.TaskManager
 
             foreach (var taskList in taskLists)
             {
-                if (taskList.NoDatabase == false)
+                if (taskList.Database != null)
                 {
                     _taskDatabases.Add(taskList.Database.TaskListName, new DatabaseSource
                     {

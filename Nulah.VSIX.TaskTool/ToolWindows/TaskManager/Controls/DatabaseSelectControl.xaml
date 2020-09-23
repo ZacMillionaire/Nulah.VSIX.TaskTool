@@ -9,16 +9,23 @@
              d:DesignHeight="450" d:DesignWidth="800"
              d:DataContext="{d:DesignInstance Type=ViewModel:DatabaseSelectViewModel, IsDesignTimeCreatable=True}"
              >
+    <!-- Viewmodel is a dependency property -->
     <!--<UserControl.DataContext>
         <ViewModel:DatabaseSelectViewModel/>
     </UserControl.DataContext>-->
+    <UserControl.Resources>
+        <ResourceDictionary Source="pack://application:,,,/Nulah.VSIX.TaskTool;component/IconResources.xaml" />
+    </UserControl.Resources>
     <StackPanel>
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="auto"/>
             </Grid.ColumnDefinitions>
-            <ComboBox Grid.Column="0" ItemsSource="{Binding Path=AvailableTaskList}" SelectedItem="{Binding SelectedTaskItem}">
+            <ComboBox Grid.Column="0"
+                      Style="{StaticResource {x:Static ToolBar.ComboBoxStyleKey}}" 
+                      ItemsSource="{Binding Path=AvailableTaskList}"
+                      SelectedItem="{Binding SelectedTaskItem}">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">
@@ -27,7 +34,8 @@
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
             </ComboBox>
-            <Button Grid.Column="1" Command="{Binding Path=CreateSolutionTaskStoreCommand}">Create Task List for Current Solution</Button>
+            <!--<Button Grid.Column="1" Command="{Binding Path=CreateSolutionTaskStoreCommand}">Create Task List for Current Solution</Button>-->
+            <Button Grid.Column="1" Style="{StaticResource UI_Open_List_Folder_Button}" Margin="10,0,0,0" Width="24" Height="24" Command="{Binding Path=CreateSolutionTaskStoreCommand}"/>
         </Grid>
         <!--
         <Button x:Name="TaskSourceButton">Change Task Source</Button>

@@ -11,7 +11,7 @@ namespace Nulah.VSIX.TaskTool
         public const string Name = "Nulah.TaskTool";
         public const string Description = @"A simple task list extension.";
         public const string Language = "en-US";
-        public const string Version = "0.2";
+        public const string Version = "0.3.1";
         public const string Author = "Scott Schultz";
         public const string Tags = "Task list, Todo List";
     }

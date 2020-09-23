@@ -7,34 +7,91 @@
         xmlns:ViewModel="clr-namespace:Nulah.VSIX.TaskTool.ToolWindows.TaskManager.ViewModels.Windows"
         xmlns:local="clr-namespace:Nulah.VSIX.TaskTool.ToolWindows.TaskManager.Windows"
         mc:Ignorable="d"
-        Title="TaskListManager" Height="450" Width="800">
+        Title="TaskListManager" Height="450" Width="800"
+        d:DataContext="{d:DesignInstance Type=ViewModel:TaskListSourceManagerViewModel, IsDesignTimeCreatable=True}"
+        UseLayoutRounding="True">
     <Window.DataContext>
         <ViewModel:TaskListSourceManagerViewModel/>
     </Window.DataContext>
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Nulah.VSIX.TaskTool;component/IconResources.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <ViewModel:IsLastItemInContainerConverter x:Key="IsLastItemConverter"/>
+        </ResourceDictionary>
+    </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <StackPanel>
-            <TextBlock>Project Task Lists</TextBlock>
+        <Border>
+            <Border.Style>
+                <Style TargetType="Border">
+                    <Style.Setters>
+                        <Setter Property="BorderBrush" Value="Black"/>
+                        <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                    </Style.Setters>
+                </Style>
+            </Border.Style>
+            <TextBlock Grid.Row="0" FontSize="24">Project Task Lists</TextBlock>
+        </Border>
+        <ScrollViewer Grid.Row="1" CanContentScroll="True" VerticalScrollBarVisibility="Auto">
             <ItemsControl ItemsSource="{Binding SolutionProjects}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate DataType="{x:Type ViewModel:ProjectListViewItem}">
-                        <StackPanel>
-                            <TextBlock Text="{Binding Name}"/>
-                            <StackPanel Orientation="Horizontal">
-                                <Button IsEnabled="{Binding NoDatabase}" Command="{Binding CreateTaskDatabaseCommand}" CommandParameter="{Binding FilePath}">
-                                    Create Task List
-                                </Button>
-                                <Button Command="{Binding OpenProjectCommand}" CommandParameter="{Binding ParentDirectory}">
-                                    Open Project Location
-                                </Button>
-                            </StackPanel>
-                        </StackPanel>
+                        <Border>
+                            <Border.Style>
+                                <Style TargetType="Border">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource IsLastItemConverter}}" Value="False">
+                                            <Setter Property="BorderBrush" Value="Black"/>
+                                            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                                        </DataTrigger>
+
+                                        <!--<DataTrigger Binding="{Binding RelativeSource={RelativeSource Self},
+       Converter={StaticResource IsLastItemInContainerConverter}}" Value="True">
+                                            <Setter Property="ContentTemplate">
+                                                <Setter.Value>
+                                                    <DataTemplate></DataTemplate> // Your lastItem template goes here
+                                                </Setter.Value>
+                                            </Setter>
+                                        </DataTrigger>-->
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
+                            <Grid>
+                                <Grid.Style>
+                                    <Style TargetType="Grid">
+                                        <Style.Setters>
+                                            <Setter Property="Margin" Value="5"/>
+                                        </Style.Setters>
+                                    </Style>
+                                </Grid.Style>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="{Binding Name}" VerticalAlignment="Center">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="FontSize" Value="15"/>
+                                            <Setter Property="FontWeight" Value="Bold" />
+                                            <Setter Property="Margin" Value="15,0,0,0"/>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                    <Button Style="{StaticResource UI_New_Task_List_Button}" IsEnabled="{Binding NoDatabase}" Command="{Binding CreateTaskDatabaseCommand}" CommandParameter="{Binding FilePath}" Margin="0,0,10,0" Width="32" Height="32"/>
+                                    <Button Style="{StaticResource UI_Delete_Task_List_Button}" IsEnabled="{Binding HasDatabase}" Command="{Binding DeleteTaskDatabaseCommand}" CommandParameter="{Binding ParentDirectory}" Margin="0,0,10,0" Width="32" Height="32"/>
+                                    <Button Style="{StaticResource UI_Open_Folder_Button}"  Command="{Binding OpenProjectCommand}" CommandParameter="{Binding ParentDirectory}" Margin="0,0,10,0" Width="32" Height="32"/>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
-        </StackPanel>
+        </ScrollViewer>
     </Grid>
 </Window>
