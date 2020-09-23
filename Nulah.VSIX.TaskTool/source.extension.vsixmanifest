@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
     <Metadata>
-        <Identity Id="Nulah.VSIX.TaskTool.210bf379-e573-4d9f-b6cb-2358d4172f12" Version="0.3" Language="en-US" Publisher="Scott Schultz" />
+        <Identity Id="Nulah.VSIX.TaskTool.210bf379-e573-4d9f-b6cb-2358d4172f12" Version="0.3.1" Language="en-US" Publisher="Scott Schultz" />
         <DisplayName>Nulah.TaskTool</DisplayName>
         <Description xml:space="preserve">A simple task list extension.</Description>
         <Tags>Task list, Todo List</Tags>
