@@ -122,6 +122,5 @@ namespace Nulah.VSIX.TaskTool.StandardLib
         public string ParentDirectory { get; set; }
         public string Kind { get; set; }
         public NulahDBMeta Database { get; set; }
-        public bool NoDatabase => Database == null;
     }
 }
