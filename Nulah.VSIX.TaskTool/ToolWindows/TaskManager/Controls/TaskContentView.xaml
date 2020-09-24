@@ -20,13 +20,10 @@
             </Style.Setters>
         </Style>
     </UserControl.Style>
-    <!--<TextBlock Padding="5" TextWrapping="Wrap" Text="{Binding TaskContent}">
-        <TextBlock.Style>
-            <Style TargetType="TextBlock">
-                <Style.Setters>
-                    <Setter Property="Background" Value="{StaticResource TaskDefault_Background}"/>
-                </Style.Setters>
-            </Style>
-        </TextBlock.Style>
-    </TextBlock>-->
+    <Grid>
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="5" x:Name="ContentPanel">
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
 </UserControl>
