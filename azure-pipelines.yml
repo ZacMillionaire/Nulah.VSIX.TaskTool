@@ -36,7 +36,7 @@ steps:
 
 - task: SonarQubePrepare@5
   inputs:
-    SonarQube: 'SonarQube'
+    SonarQube: 'SonarQube - Nulah.VSIX.TaskTool'
     scannerMode: 'MSBuild'
     projectKey: 'Nulah_VS_Extension_Nulah_VS_Extension_AYH78lmwQQExGKyQH-A9'
 
