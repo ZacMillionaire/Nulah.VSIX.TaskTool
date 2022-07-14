@@ -3,8 +3,8 @@ trigger:
   include:
     - releases/*
 
-pool:
-  vmImage: 'windows-latest'
+pool: DesktopPC
+  #vmImage: 'windows-latest'
 
 variables:
   solution: '**/*.sln'
