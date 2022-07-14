@@ -34,6 +34,12 @@ steps:
   inputs:
     restoreSolution: '$(solution)'
 
+- task: SonarQubePrepare@5
+  inputs:
+    SonarQube: 'SonarQube'
+    scannerMode: 'MSBuild'
+    projectKey: 'Nulah_VS_Extension_Nulah_VS_Extension_AYH78lmwQQExGKyQH-A9'
+
 - task: VSBuild@1
   inputs:
     solution: '$(solution)'
@@ -41,7 +47,12 @@ steps:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
 
+- task: SonarQubeAnalyze@5
 
+- task: SonarQubePublish@5
+  inputs:
+    pollingTimeoutSec: '300'
+    
 # Digitally sign the extension with an internal cert - currently self signed and will result in an invalid signature
 # when the extension is installed.
 # We are accepting this for now until a valid code signing cert is obtained
